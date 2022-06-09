@@ -22,3 +22,5 @@ add_executable ("graph_framework"
  )
 target_link_libraries(graph_framework PRIVATE TBB::tbb)
 # TODO: Add tests and install targets if needed.
+include(CTest)
+add_subdirectory(test)

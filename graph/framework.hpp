@@ -12,6 +12,7 @@
 #include "combine_node.h"
 #include "fliter_node.h"
 #include "proccessor_node.h"
+#include "config.h"
 
 
 // TODO: Reference additional headers your program requires here.
