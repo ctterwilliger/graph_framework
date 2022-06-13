@@ -6,14 +6,21 @@
 #include "../graph/framework.hpp"
 #include "../graph/graph.h"
 #include <tuple>
-#include "../graph/type_config.h"
+
 using namespace std;
 using namespace oneapi::tbb;
 
+
+// FOR TESTING PURPOSES ONLY!!!!!!!!!!!!!!!!
+int A =0;
+int B =0; 
 int main()
 {
 	graph grph;
 	grph.add_filter_node("1",true, flow::unlimited );
-	cout << "Hello CMake." << endl;
+	grph.add_proccess_node("2", flow::unlimited, []() {});
+	grph.print_nodes();
+	grph.add_edge("1", "2"); 
+	grph.print_edges(); 
 	return 0;
 }

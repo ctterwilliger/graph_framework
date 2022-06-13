@@ -37,10 +37,25 @@ using data_obj = std::shared_ptr<user_data_store >;
 using data_t = std::tuple< data_ID, data_obj>;
 // TODO: Reference additional headers your program requires here.
 
-bool isValidID(data_ID ID) {
+bool isValidID(const data_ID & ID) {
     if (ID >= 0)
     {
         return true;
     }
     return false; 
 }
+
+size_t ID_castToSizeT(const data_ID& ID)
+{
+    if (ID < 0)
+    {
+        return (size_t)-ID;
+    }
+    return (size_t)ID;
+}
+
+size_t getSizeT_ID(const data_t& data)
+{
+    return ID_castToSizeT(std::get<0>(data));
+}
+

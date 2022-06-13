@@ -11,21 +11,24 @@ public:
 
 	graph();
 	~graph();
-
-	
+	void run_graph(); 
+	// adds a filter node to user_nodes
 	void add_filter_node( std::string name, size_t const& concurrency, bool  Func);
 
+	// adds a proccess node to user_nodes
 	template<typename Func>
-	void add_proccess_node( std::string, size_t const& concurrency, typename Func);
+	void add_proccess_node(std::string name, size_t const& concurrency,  Func f );
 
-	void add_edge(std::string, std::string);
+	// adds an edge between two nodes in graph
+	void add_edge(std::string node1, std::string node2);
 
-	/*void refresh_graph();
+	void refresh_graph();
 	
-	
+	void print_nodes();
+	void print_edges();
 	
 
-	template<typename Func1, typename Func2>
+	/*template<typename Func1, typename Func2>
 	void remove_edge(typename Func1, typename Func2);*/
 	
 	
@@ -33,16 +36,23 @@ public:
 
 
 private:
-	bool is_node_in_graph(std::string);
+	bool is_node_in_graph(std::string node);
 
-	bool is_edge_in_graph(std::string, std::string);
+	bool is_edge_in_graph(std::string node1, std::string node2);
+
+	void count_predecessors();
+
+	// creates a join node to proceed a node
+	void create_join(std::string node);
+	void add_join_node();
+	void add_combine_node()
+
 
 	//TODO
 	//void traverse_graph();
-	//void count_predessesors();
-	//void create_joins();
-	//void add_join_node();
-	//void add_combine_node(); 
+	//void find_start_node(); 
+	
+	; 
 	
 	//std::vector<oneapi::tbb::flow::multifunction_node<data_t, std::tuple<data_t, data_t>>> nodes;
 	//std::vector<oneapi::tbb::flow::function_node<data_t, data_t> > nodes; 
