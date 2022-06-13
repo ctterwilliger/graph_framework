@@ -1,7 +1,10 @@
 #pragma once
+
+
+
 class node {
 public:
-
-private:
+	node();
+	~node(); 
 
 };

@@ -36,3 +36,11 @@ private:
 using data_obj = std::shared_ptr<user_data_store >;
 using data_t = std::tuple< data_ID, data_obj>;
 // TODO: Reference additional headers your program requires here.
+
+bool isValidID(data_ID ID) {
+    if (ID >= 0)
+    {
+        return true;
+    }
+    return false; 
+}

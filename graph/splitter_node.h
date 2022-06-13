@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <memory>
 #include <tuple>
-#include "config.h"
+#include "type_config.h"
 //template <typename Input, typename Outputs, typename Func>
 //auto make_splitter_node(tbb::flow::graph& g, size_t  concurrency, Func f);
 

@@ -13,7 +13,7 @@ add_library(graph INTERFACE
 	"graph_end_node.cpp"
 	"start_node.cpp" 
 	"proccessor_node.cpp"
-	 "config.h")
+	 "type_config.h")
 
 
 # Add source to this project's executable.
