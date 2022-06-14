@@ -20,8 +20,8 @@ make_start_node(oneapi::tbb::flow::graph & g){
 			auto& [ID, data] = output; 
 			std::shared_ptr<std::tuple<int, int>> temp(new std::tuple<int, int>); 
 			data = temp; 
+			ID = count; 
 			auto& [int1, int2] = *data;
-			std::cout << count + 10; 
 			int1 = count;
 			int2 = -count; 
 			return output; 

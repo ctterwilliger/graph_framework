@@ -18,25 +18,7 @@ graph::~graph() {
 
 }
 
-bool graph::is_node_in_graph(data_nodeID node) {
 
-	if (user_nodes.count(node) == 0)
-		return false;
-
-	return true;
-}
-
-bool graph::is_edge_in_graph(data_nodeID node1, data_nodeID node2) {
-	for (auto& n : edges)
-	{
-		const auto& [edgeNode1, edgeNode2] = n;
-		if (node1 == edgeNode1 && node2 == edgeNode2)
-		{
-			return true;
-		}
-	}
-	return false;
-}
 
 
 template<typename FT>
@@ -103,6 +85,80 @@ void graph::refresh_graph() {
 	make_edge(start_node, (user_nodes.at("start")).first) ;
 
 }
+void graph::count_predecessors()
+{
+	// sets all to 0 then counts if it is in edges as the second term
+	for (auto& n : user_nodes)
+	{
+		n.second.second = 0;
+
+		for (const auto& m : edges)
+		{
+			if (m.second == n.first)
+			{
+				n.second.second++;
+			}
+		}
+	}
+}
+
+void graph::create_join_nodes() {
+	for (const auto& n : user_nodes)
+	{
+		const auto& [name, pair] = n;
+		const auto& [node, num] = pair;
+		if (num == 2)
+		{
+
+			create_join(name);
+		}
+	}
+}
+
+
+void graph::connect_nodes()
+{
+
+	for (const auto& n : edges)
+	{
+		auto& [name1, name2] = n;
+		auto& [node2, num2] = user_nodes.at(name2);
+		auto& [node1, num1] = user_nodes.at(name1);
+		//std::cout << num2 << std::endl; 
+		if (num2 == 0) {
+
+			// donothing
+
+		}
+		else if (num2 == 1)
+		{
+			oneapi::tbb::flow::make_edge(node1, node2);
+		}
+		else if (num2 == 2)
+		{
+			auto& [joinNode, combineNode, num] = join_nodes.at(name2);
+			std::cout << num << std::endl;
+			if (num == 0)
+			{
+				oneapi::tbb::flow::make_edge(node1, std::get<0>(joinNode.input_ports()));
+				num++;
+			}
+			else if (num == 1)
+			{
+				oneapi::tbb::flow::make_edge(node1, std::get<1>(joinNode.input_ports()));
+				num++;
+			}
+			else {
+				throw 1;
+			}
+		}
+		else
+		{
+			//throw 1;
+		}
+
+	}
+}
 
 void graph::find_EoG()
 {
@@ -153,72 +209,39 @@ void graph::wait_graph()
 }
 
 
+bool graph::is_node_in_graph(data_nodeID  node) {
 
+	if (user_nodes.count(node) == 0)
+		return false;
 
-void graph::create_join_nodes() {
-	for (const auto& n : user_nodes)
-	{
-		const auto& [name, pair] = n;
-		const auto& [node, num] = pair;
-		if (num== 2)
-		{
-			
-			create_join(name); 
-		}
-	}
+	return true;
 }
 
-void graph::connect_nodes()
-{
-
-	for (const auto & n : edges)
+bool graph::is_edge_in_graph(data_nodeID node1, data_nodeID node2) {
+	for (auto& n : edges)
 	{
-		 auto& [name1, name2] = n;
-		 auto& [node2, num2] = user_nodes.at(name2);
-		 auto& [node1, num1] = user_nodes.at(name1);
-		
-		if (num2 == 0) {
-
-			// donothing
-
-		}
-		else if (num2 ==1)
+		const auto& [edgeNode1, edgeNode2] = n;
+		if (node1 == edgeNode1 && node2 == edgeNode2)
 		{
-			oneapi::tbb::flow::make_edge(node1,node2);
+			return true;
 		}
-		else if (num2 == 2)
-		{
-			auto & [joinNode, combineNode, num] = join_nodes.at(name2);
-			if (num == 0)
-			{
-				oneapi::tbb::flow::make_edge(node1, std::get<0>(joinNode.input_ports())); 
-				num++;
-			}
-			else if (num == 1)
-			{
-				oneapi::tbb::flow::make_edge(node1, std::get<1>(joinNode.input_ports()));
-				num++;
-			}
-			else {
-				throw 1; 
-			}
-		}
-		else
-		{
-			//throw 1;
-		}
-
 	}
+	return false;
 }
+
+
+
+
 
 auto graph::add_join_node()
 {
-	return make_join_node(g);
+	return make_join_node<data_t,data_t>(g);
+
 }
 
  auto graph::add_combine_node()
 {
-	 return make_combine_node(g);
+	 return make_combine_node<data_t,data_t>(g);
 }
 
 void graph::create_join(data_nodeID node)
@@ -249,22 +272,7 @@ void graph::print_edges()
 	}
 }
 
-void graph::count_predecessors() 
-{
-	// sets all to 0 then counts if it is in edges as the second term
-	for (auto& n : user_nodes) 
-	{
-		n.second.second = 0; 
 
-		for (const auto& m : edges)
-		{
-			if (m.second == n.first)
-			{
-				n.second.second++; 
-			}
-		}
-	}
-}
 
 
 

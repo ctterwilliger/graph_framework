@@ -11,12 +11,12 @@ make_end_of_graph_node(oneapi::tbb::flow::graph& g) {
 			auto const& [int1, int2] = *OutData; 
 			if (isValidID(ID))
 			{
-				std::cout << "Ouput: " << int1 << " " << int2 << std::endl; 
+				std::cout << "Ouput: " << int1 << " " << int2 <<" " << ID << std::endl;
 				std::get<1>(outputs).try_put(data);
 			}
 			else
 			{
-				std::cout << "Trash: " << int1 << " " << int2 << std::endl;
+				std::cout << "Trash: " << int1 << " " << int2 <<" " << ID<< std::endl;
 				std::get<0>(outputs).try_put(data);
 			}
 
