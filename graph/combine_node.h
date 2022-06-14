@@ -19,8 +19,7 @@
 //	);
 //}
 
-//oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching>
-auto
+oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching>
 make_join_node(oneapi::tbb::flow::graph& g)
 {
 	return oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching>(g,
@@ -34,19 +33,28 @@ make_join_node(oneapi::tbb::flow::graph& g)
 		});
 }
 
+oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t>
+make_combine_node(oneapi::tbb::flow::graph& g) {
+	return oneapi::tbb::flow::function_node< std::tuple <data_t, data_t>, data_t>(g, oneapi::tbb::flow::unlimited,
+		[&](const std::tuple<data_t, data_t>& inData) {
+			data_t output;
+			auto& [outID, outData] = output;
+			auto const& [inDataT1, inDataT2] = inData;
+			auto const& [inID1, indata1] = inDataT1;
+			auto const& [inID2, indata2] = inDataT2;
 
+			if (!(isEquivID(inID1, inID2)))
+			{
+				throw 1; 
+			}
+			
+			outID = inID1;
+			outData = indata1; 
+			
+			return output;
+		}); 
+}
 
-//oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching> join(g,
-//	[](const data_t& data) {
-//		return (size_t)std::get<0>(data).get();
-//	},
-//	[](const data_t& data) {
-//		return (size_t)std::get<0>(data).get();
-//	}
-//	);
-//
-//
-//
 //// repacks ptr tuple(data_sub1) and ptr tuple(tuple_sub2) into prt and tuple(data)
 //flow::function_node< tuple<data_t, data_t>, data_pt> join_combine(g, flow::unlimited, [&](const tuple<data_t, data_t>& data) {
 //	data_pt output;
@@ -63,3 +71,8 @@ make_join_node(oneapi::tbb::flow::graph& g)
 //	{
 //		throw 1; // can be changed
 //	}
+//ptr = ptr1;
+//tup1 = base1;
+//tup2 = base2;
+//return output;
+//});

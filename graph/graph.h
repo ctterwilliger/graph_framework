@@ -4,7 +4,7 @@
 #include "type_config.h"
 #include <map>
 #include <string>
-
+using data_nodeID = std::string; 
 class graph
 {
 public:
@@ -44,22 +44,51 @@ private:
 
 	// creates a join node to proceed a node
 	void create_join(std::string node);
-	void add_join_node();
-	void add_combine_node()
+
+	// returns a join_node
+	auto add_join_node();
+
+	//returns a combine_node
+	auto add_combine_node();
+
+	//connects all the user_nodes
+	void connect_nodes();
+
+	//creates a join_node to precceed each user_node that needs one and addes it to join_nodes map
+	void create_join_nodes(); 
+
+	// find the end of the graph to place EoG nodes
+	void find_EoG();
+
+	// finds the end of graph given a node
+	void find_end(std::string); 
 
 
-	//TODO
-	//void traverse_graph();
-	//void find_start_node(); 
+
+	void find_start_node(); 
 	
-	; 
+	//creates a EoG_node for a given node
+	void create_EoG_node(std::string); 
+
+
 	
-	//std::vector<oneapi::tbb::flow::multifunction_node<data_t, std::tuple<data_t, data_t>>> nodes;
-	//std::vector<oneapi::tbb::flow::function_node<data_t, data_t> > nodes; 
-	std::map<std::string, std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,int>> user_nodes;
-	std::vector < oneapi::tbb::flow::join_node< std::tuple < data_t, data_t>, oneapi::tbb::flow::tag_matching> > join_nodes; 
-	std::vector < oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t> > combine_nodes; 
-	std::vector < oneapi::tbb::flow::multifunction_node < data_t,  data_t, std::tuple < data_t, data_t>>> end_graph_nodes; 
+	
+	// hold all the assocated nodes
+	// Map(name, pair(user node, numPredessors))
+	
+	std::map<std::string, 
+		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
+
+	// MaP(nameOfNodetoPrecess, tuple<join_node, combine_node, numOfCurConnectedNode))
+	std::map <std::string, 
+		std::tuple<oneapi::tbb::flow::join_node< std::tuple < data_t, data_t>, oneapi::tbb::flow::tag_matching>, 
+		 oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t> ,
+		size_t >> join_nodes;
+
+	// Map(nameOfNodetoProceed, EoGNode), 
+	std::map < std::string, 
+		oneapi::tbb::flow::multifunction_node < data_t, data_t, std::tuple < data_t, data_t>>> end_graph_nodes;
+	
 
 	// currently prints
 	std::vector < oneapi::tbb::flow::function_node<data_t>> output_nodes;

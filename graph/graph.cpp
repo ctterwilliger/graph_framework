@@ -21,20 +21,21 @@ bool graph::is_node_in_graph(std::string node) {
 	return true;
 }
 
-bool graph::is_edge_in_graph(std::string node1, std::string node2){
-	for (auto & n: edges)
+bool graph::is_edge_in_graph(std::string node1, std::string node2) {
+	for (auto& n : edges)
 	{
-		if (node1 == n.first && node2 == n.second)
+		const auto& [edgeNode1, edgeNode2] = n;
+		if (node1 == edgeNode1 && node2 == edgeNode2)
 		{
 			return true;
 		}
 	}
-	return false; 
+	return false;
 }
 
 
 
-void graph::add_filter_node(  std::string name, size_t const& concurrency, bool  Func)
+void graph::add_filter_node(std::string name, size_t const& concurrency, bool  Func)
 {
 	if ((is_node_in_graph(name)))
 	{
@@ -42,12 +43,12 @@ void graph::add_filter_node(  std::string name, size_t const& concurrency, bool 
 	}
 	else
 	{
-		user_nodes.emplace(name, std::make_pair( make_filter_node(g, concurrency, Func),0));
+		user_nodes.emplace(name, std::make_pair(make_filter_node(g, concurrency, Func), 0));
 	}
-	
+
 }
 
-template<typename Func> 
+template<typename Func>
 void graph::add_proccess_node(std::string name, size_t const& concurrency, Func f)
 {
 	if ((is_node_in_graph(name)))
@@ -56,11 +57,11 @@ void graph::add_proccess_node(std::string name, size_t const& concurrency, Func 
 	}
 	else
 	{
-		
-		user_nodes.emplace(name, std::make_pair(make_proccess_node(g, concurrency, f),0));
+
+		user_nodes.emplace(name, std::make_pair(make_proccess_node(g, concurrency, f), 0));
 	}
-	
-	
+
+
 }
 
 void graph::add_edge(std::string node1, std::string node2)
@@ -80,39 +81,115 @@ void graph::add_edge(std::string node1, std::string node2)
 	else
 	{
 		edges.push_back(std::make_pair(node1, node2));
-		refresh_graph();
 	}
 }
 
 void graph::refresh_graph() {
 	count_predecessors();
-	
-	// iterate through edges connects all nodes that are not being joined
-	for (auto n : edges)
+
+	create_join_nodes();
+
+	// iterate through edges connects all nodes 
+	connect_nodes(); 
+
+	find_EoG();
+	find_start_node(); 
+
+
+}
+
+void graph::find_EoG()
+{
+
+}
+void graph::find_end()
+{
+
+}
+void graph::find_start_node() {
+
+}
+
+void graph::create_join_nodes() {
+	for (const auto& n : user_nodes)
 	{
-		if (user_nodes.at(n.second).second == 1)
+		const auto& [name, pair] = n;
+		const auto& [node, num] = pair;
+		if (num== 2)
 		{
-			oneapi::tbb::flow::make_edge(user_nodes.at(n.first).first, user_nodes.at(n.second).first);
+			
+			create_join(name); 
 		}
 	}
-
-
-
 }
 
-void graph::add_join_node()
+void graph::connect_nodes()
 {
 
+	for (const auto & n : edges)
+	{
+		 auto& [name1, name2] = n;
+		 auto& [node2, num2] = user_nodes.at(name2);
+		 auto& [node1, num1] = user_nodes.at(name1);
+		
+		if (num2 == 0) {
+
+			// donothing
+
+		}
+		else if (num2 == 1)
+		{
+			oneapi::tbb::flow::make_edge(node1,node2);
+		}
+		else if (num2 == 2)
+		{
+			auto [joinNode, combineNode, num] = join_nodes.at(name2);
+			
+
+
+			if (num == 0)
+			{
+				oneapi::tbb::flow::make_edge(node1, std::get<0>(joinNode.input_ports())); 
+			}
+			else if (num == 1)
+			{
+				oneapi::tbb::flow::make_edge(node1, std::get<1>(joinNode.input_ports()));
+			}
+			else {
+				throw 1; 
+			}
+		}
+		else
+		{
+			throw 1; 
+		}
+
+	}
 }
 
-void graph::add_combine_node()
+auto graph::add_join_node()
 {
-
+	return make_join_node(g);
 }
+
+ auto graph::add_combine_node()
+{
+	 return make_combine_node(g);
+}
+
 void graph::create_join(std::string node)
 {
 
+	join_nodes.emplace(node, std::make_tuple(add_join_node(), add_combine_node(), 0) );
+
+	auto& [joinNode, combineNode, num] = join_nodes.at(node); 
+	auto& [proNode, num2] = user_nodes.at(node);
+
+	oneapi::tbb::flow::make_edge(joinNode, combineNode);
+
+	oneapi::tbb::flow::make_edge(combineNode, proNode); 
 }
+
 void graph::print_nodes() {
 	for (const auto& n : user_nodes)
 	{

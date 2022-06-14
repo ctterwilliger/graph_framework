@@ -1,6 +1,12 @@
 // graph_framework.h : Include file for standard system include files,
 // or project specific include files.
 
+// TODO!!!!!!!!!!
+// ALLOW ACCESS OF DATA FOR USER potialt pointer to vector(or to data_t) instead of vector of point
+// HANDLE EXCEPTIONS
+// ALLOW join nodes of Size > 2
+//
+
 #pragma once
 
 

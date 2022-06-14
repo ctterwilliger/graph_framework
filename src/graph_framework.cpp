@@ -17,10 +17,13 @@ int B =0;
 int main()
 {
 	graph grph;
-	grph.add_filter_node("1",true, flow::unlimited );
-	grph.add_proccess_node("2", flow::unlimited, []() {});
+	grph.add_filter_node("1", flow::unlimited, true );
+	grph.add_proccess_node("2", flow::unlimited, []() {
+		A = B + 1; 
+		});
 	grph.print_nodes();
 	grph.add_edge("1", "2"); 
 	grph.print_edges(); 
+	grph.refresh_graph(); 
 	return 0;
 }

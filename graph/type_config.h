@@ -59,3 +59,11 @@ size_t getSizeT_ID(const data_t& data)
     return ID_castToSizeT(std::get<0>(data));
 }
 
+bool isEquivID(data_ID ID1, data_ID ID2)
+{
+    if (ID1 == ID2 || ID1 == -ID2)
+    {
+        return true;
+    }
+    return false; 
+}
