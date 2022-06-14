@@ -13,14 +13,14 @@ public:
 	~graph();
 	void run_graph(); 
 	// adds a filter node to user_nodes
-	void add_filter_node( std::string name, size_t const& concurrency, bool  Func);
+	void add_filter_node( data_nodeID name, size_t const& concurrency, bool  Func);
 
 	// adds a proccess node to user_nodes
 	template<typename Func>
-	void add_proccess_node(std::string name, size_t const& concurrency,  Func f );
+	void add_proccess_node(data_nodeID name, size_t const& concurrency,  Func f );
 
 	// adds an edge between two nodes in graph
-	void add_edge(std::string node1, std::string node2);
+	void add_edge(data_nodeID node1, data_nodeID node2);
 
 	void refresh_graph();
 	
@@ -36,14 +36,14 @@ public:
 
 
 private:
-	bool is_node_in_graph(std::string node);
+	bool is_node_in_graph(data_nodeID node);
 
-	bool is_edge_in_graph(std::string node1, std::string node2);
+	bool is_edge_in_graph(data_nodeID node1, data_nodeID node2);
 
 	void count_predecessors();
 
 	// creates a join node to proceed a node
-	void create_join(std::string node);
+	void create_join(data_nodeID node);
 
 	// returns a join_node
 	auto add_join_node();
@@ -61,14 +61,14 @@ private:
 	void find_EoG();
 
 	// finds the end of graph given a node
-	void find_end(std::string); 
+	void find_end(data_nodeID); 
 
 
 
 	void find_start_node(); 
 	
 	//creates a EoG_node for a given node
-	void create_EoG_node(std::string); 
+	void create_EoG_node(data_nodeID node); 
 
 
 	
@@ -76,23 +76,23 @@ private:
 	// hold all the assocated nodes
 	// Map(name, pair(user node, numPredessors))
 	
-	std::map<std::string, 
+	std::map<data_nodeID, 
 		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
 
 	// MaP(nameOfNodetoPrecess, tuple<join_node, combine_node, numOfCurConnectedNode))
-	std::map <std::string, 
+	std::map <data_nodeID, 
 		std::tuple<oneapi::tbb::flow::join_node< std::tuple < data_t, data_t>, oneapi::tbb::flow::tag_matching>, 
 		 oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t> ,
 		size_t >> join_nodes;
 
 	// Map(nameOfNodetoProceed, EoGNode), 
-	std::map < std::string, 
+	std::map < data_nodeID, 
 		oneapi::tbb::flow::multifunction_node < data_t, data_t, std::tuple < data_t, data_t>>> end_graph_nodes;
 	
 
 	// currently prints
 	std::vector < oneapi::tbb::flow::function_node<data_t>> output_nodes;
-	std::vector<std::pair<std::string,std::string>> edges; 
+	std::vector<std::pair<data_nodeID,data_nodeID>> edges; 
 	oneapi::tbb::flow::graph g; 
 };
 

@@ -13,7 +13,7 @@ graph::~graph() {
 
 }
 
-bool graph::is_node_in_graph(std::string node) {
+bool graph::is_node_in_graph(data_nodeID node) {
 
 	if (user_nodes.count(node) == 0)
 		return false;
@@ -21,7 +21,7 @@ bool graph::is_node_in_graph(std::string node) {
 	return true;
 }
 
-bool graph::is_edge_in_graph(std::string node1, std::string node2) {
+bool graph::is_edge_in_graph(data_nodeID node1, data_nodeID node2) {
 	for (auto& n : edges)
 	{
 		const auto& [edgeNode1, edgeNode2] = n;
@@ -35,7 +35,7 @@ bool graph::is_edge_in_graph(std::string node1, std::string node2) {
 
 
 
-void graph::add_filter_node(std::string name, size_t const& concurrency, bool  Func)
+void graph::add_filter_node(data_nodeID name, size_t const& concurrency, bool  Func)
 {
 	if ((is_node_in_graph(name)))
 	{
@@ -49,7 +49,7 @@ void graph::add_filter_node(std::string name, size_t const& concurrency, bool  F
 }
 
 template<typename Func>
-void graph::add_proccess_node(std::string name, size_t const& concurrency, Func f)
+void graph::add_proccess_node(data_nodeID name, size_t const& concurrency, Func f)
 {
 	if ((is_node_in_graph(name)))
 	{
@@ -64,7 +64,7 @@ void graph::add_proccess_node(std::string name, size_t const& concurrency, Func 
 
 }
 
-void graph::add_edge(std::string node1, std::string node2)
+void graph::add_edge(data_nodeID node1, data_nodeID node2)
 {
 	if (is_edge_in_graph(node1, node2))
 	{
@@ -92,6 +92,7 @@ void graph::refresh_graph() {
 	// iterate through edges connects all nodes 
 	connect_nodes(); 
 
+	//finds and creates EoG nodes
 	find_EoG();
 	find_start_node(); 
 
@@ -100,11 +101,34 @@ void graph::refresh_graph() {
 
 void graph::find_EoG()
 {
-
+	// VERY SLOW n^3 logn runtime 
+	for (auto& n : user_nodes)
+	{
+		auto& [node, NODEANDNUM] = n; 
+		find_end(node); 
+	}
 }
-void graph::find_end()
+void graph::find_end(data_nodeID node)
 {
+	bool atEnd = true;
+	for (auto& n : edges)
+	{
+		auto& [node1, node2] = n;
+		if (node1 == node)
+		{
+			atEnd == false; 
+			find_end(node2); 
+		}
+	}
+	if (atEnd)
+	{
+		create_EoG_node(node); 
+	}
+}
 
+void graph::create_EoG_node(data_nodeID node)
+{
+	end_graph_nodes.emplace()
 }
 void graph::find_start_node() {
 
@@ -177,7 +201,7 @@ auto graph::add_join_node()
 	 return make_combine_node(g);
 }
 
-void graph::create_join(std::string node)
+void graph::create_join(data_nodeID node)
 {
 
 	join_nodes.emplace(node, std::make_tuple(add_join_node(), add_combine_node(), 0) );
