@@ -4,6 +4,7 @@
 #include "type_config.h"
 #include <map>
 #include <string>
+#include "start_node.h"
 using data_nodeID = std::string; 
 class graph
 {
@@ -12,8 +13,10 @@ public:
 	graph();
 	~graph();
 	void run_graph(); 
+	void wait_graph();
 	// adds a filter node to user_nodes
-	void add_filter_node( data_nodeID name, size_t const& concurrency, bool  Func);
+	template<typename FT>
+	void add_filter_node( data_nodeID name, size_t const& concurrency, FT  Func);
 
 	// adds a proccess node to user_nodes
 	template<typename Func>
@@ -26,7 +29,8 @@ public:
 	
 	void print_nodes();
 	void print_edges();
-	
+	void print_EoG_nodes(); 
+	void print_join_nodes();
 
 	/*template<typename Func1, typename Func2>
 	void remove_edge(typename Func1, typename Func2);*/
@@ -70,9 +74,14 @@ private:
 	//creates a EoG_node for a given node
 	void create_EoG_node(data_nodeID node); 
 
+	
+	
+	
 
-	
-	
+	// these print for the purposed of testing
+	void create_output_node(data_nodeID node);
+
+	void create_trash_node(data_nodeID node);
 	// hold all the assocated nodes
 	// Map(name, pair(user node, numPredessors))
 	
@@ -87,13 +96,15 @@ private:
 
 	// Map(nameOfNodetoProceed, EoGNode), 
 	std::map < data_nodeID, 
-		oneapi::tbb::flow::multifunction_node < data_t, data_t, std::tuple < data_t, data_t>>> end_graph_nodes;
-	
+		oneapi::tbb::flow::multifunction_node <data_t, std::tuple < data_t, data_t>>> end_graph_nodes;
+	std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> output_nodes;
+	std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> trash_nodes;
 
-	// currently prints
-	std::vector < oneapi::tbb::flow::function_node<data_t>> output_nodes;
 	std::vector<std::pair<data_nodeID,data_nodeID>> edges; 
+	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g);
 	oneapi::tbb::flow::graph g; 
+	
+	
 };
 
 #include "graph.cpp" //review

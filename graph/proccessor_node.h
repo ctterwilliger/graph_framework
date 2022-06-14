@@ -14,7 +14,7 @@ make_proccess_node(oneapi::tbb::flow::graph& g, size_t  concurrency, Func  f) {
 
 			if (isValidID(ID))
 			{
-				f;
+				f(data);
 			}
 			return data;
 		}

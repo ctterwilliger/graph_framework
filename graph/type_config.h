@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+
+
 using data_ID = long;
 
 
@@ -33,7 +35,7 @@ private:
     std::vector<std::unique_ptr<base_data>> data_;
 };
 
-using data_obj = std::shared_ptr<user_data_store >;
+using data_obj = std::shared_ptr<std::tuple<int,int>>;
 using data_t = std::tuple< data_ID, data_obj>;
 // TODO: Reference additional headers your program requires here.
 

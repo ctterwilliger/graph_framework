@@ -8,7 +8,7 @@ add_library(graph INTERFACE
 	"framework.hpp"
 	"multi_node.cpp" 
 	"filter_node.cpp" 
-	"combine_node.cpp" 
+	 
 	"splitter_node.cpp" 
 	"graph_end_node.cpp"
 	"start_node.cpp" 

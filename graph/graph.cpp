@@ -3,6 +3,11 @@
 #include "filter_node.h"
 #include <iostream>
 #include "type_config.h"
+#include "combine_node.h"
+#include "graph_end_node.h"
+
+
+
 graph::graph() {
 
 }
@@ -34,8 +39,8 @@ bool graph::is_edge_in_graph(data_nodeID node1, data_nodeID node2) {
 }
 
 
-
-void graph::add_filter_node(data_nodeID name, size_t const& concurrency, bool  Func)
+template<typename FT>
+void graph::add_filter_node(data_nodeID name, size_t const& concurrency, FT  Func)
 {
 	if ((is_node_in_graph(name)))
 	{
@@ -88,14 +93,14 @@ void graph::refresh_graph() {
 	count_predecessors();
 
 	create_join_nodes();
-
+	
 	// iterate through edges connects all nodes 
 	connect_nodes(); 
 
 	//finds and creates EoG nodes
 	find_EoG();
-	find_start_node(); 
-
+	//find_start_node(); 
+	make_edge(start_node, (user_nodes.at("start")).first) ;
 
 }
 
@@ -116,23 +121,39 @@ void graph::find_end(data_nodeID node)
 		auto& [node1, node2] = n;
 		if (node1 == node)
 		{
-			atEnd == false; 
+			atEnd = false; 
 			find_end(node2); 
 		}
 	}
 	if (atEnd)
 	{
 		create_EoG_node(node); 
+		auto& [nodeAtEnd, num] = user_nodes.at(node);
+		auto& EoG = end_graph_nodes.at(node);
+		make_edge(nodeAtEnd, EoG); 
 	}
 }
 
 void graph::create_EoG_node(data_nodeID node)
 {
-	end_graph_nodes.emplace()
+	end_graph_nodes.emplace(node, make_end_of_graph_node(g));
 }
-void graph::find_start_node() {
 
+
+
+
+void graph::find_start_node() {
+	
+	
 }
+
+void graph::wait_graph()
+{
+	g.wait_for_all(); 
+}
+
+
+
 
 void graph::create_join_nodes() {
 	for (const auto& n : user_nodes)
@@ -161,23 +182,22 @@ void graph::connect_nodes()
 			// donothing
 
 		}
-		else if (num2 == 1)
+		else if (num2 ==1)
 		{
 			oneapi::tbb::flow::make_edge(node1,node2);
 		}
 		else if (num2 == 2)
 		{
-			auto [joinNode, combineNode, num] = join_nodes.at(name2);
-			
-
-
+			auto & [joinNode, combineNode, num] = join_nodes.at(name2);
 			if (num == 0)
 			{
 				oneapi::tbb::flow::make_edge(node1, std::get<0>(joinNode.input_ports())); 
+				num++;
 			}
 			else if (num == 1)
 			{
 				oneapi::tbb::flow::make_edge(node1, std::get<1>(joinNode.input_ports()));
+				num++;
 			}
 			else {
 				throw 1; 
@@ -185,7 +205,7 @@ void graph::connect_nodes()
 		}
 		else
 		{
-			throw 1; 
+			//throw 1;
 		}
 
 	}
@@ -217,7 +237,7 @@ void graph::create_join(data_nodeID node)
 void graph::print_nodes() {
 	for (const auto& n : user_nodes)
 	{
-		std::cout << "node: " << n.first << std::endl;
+		std::cout << "node: " << n.first << " " << n.second.second <<std::endl;
 	}
 }
 
@@ -253,5 +273,20 @@ void graph::count_predecessors()
 //
 
 void graph::run_graph() {
+	start_node.activate();
+}
 
+void graph::print_EoG_nodes()
+{
+	for (auto& n : end_graph_nodes)
+	{
+		std::cout << "EoG: " << n.first << std::endl;
+	}
+}
+
+void graph::print_join_nodes() {
+	for (auto &  n : join_nodes)
+	{
+		std::cout << "joins: " << n.first << std::endl;
+	}
 }

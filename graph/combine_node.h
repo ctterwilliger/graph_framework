@@ -1,24 +1,6 @@
 #pragma once
 
 
-//oneapi::tbb::flow::function_node<data_t, data_t>
-//make_filter_node(oneapi::tbb::flow::graph& g, size_t  concurrency, bool f) {
-//	return oneapi::tbb::flow::function_node<data_t, data_t>(g, concurrency, [&](const data_t& data)
-//		{
-//			auto output = data;
-//			auto & [ID, data_ptr] = output;
-//
-//			if (isValidID(ID))
-//			{
-//				if (f) {
-//					ID = -ID;
-//				}
-//			}
-//			return output;
-//		}
-//	);
-//}
-
 oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching>
 make_join_node(oneapi::tbb::flow::graph& g)
 {
@@ -47,8 +29,14 @@ make_combine_node(oneapi::tbb::flow::graph& g) {
 			{
 				throw 1; 
 			}
-			
-			outID = inID1;
+			if (inID1 < inID2)
+			{
+				outID = inID1;
+			}
+			else
+			{
+				outID = inID2; 
+			}
 			outData = indata1; 
 			
 			return output;
