@@ -111,6 +111,9 @@ private:
 	// hold all the assocated nodes
 	// Map(name, pair(user node, numPredessors))
 	
+
+	std::map<data_nodeID, std::shared_ptr<join_base>> joins;
+
 	std::map<data_nodeID, 
 		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
 
@@ -130,7 +133,7 @@ private:
 	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g);
 	oneapi::tbb::flow::graph g; 
 	
-	//std::map<data_nodeID, std::shared_ptr<join_base>> joins;
+	
 
 	
 };

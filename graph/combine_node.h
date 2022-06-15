@@ -1,5 +1,5 @@
 #pragma once
-
+#include <vector>
 
 class join_base {
 public:
@@ -9,7 +9,7 @@ public:
 template <typename... T>
 class join_and_combine : public join_base {
 public:
-	join_and_combine(T...)
+	join_and_combine()
 	{
 
 	}
@@ -21,9 +21,28 @@ private:
 };
 
 
+template <std::size_t I, typename Tuple>
+data_t get_entry_for_index(Tuple const& inData)
+{
+	if constexpr (I == std::tuple_size_v<Tuple>) {
+		return std::get<0>(inData);
+	}
+	else {
+		auto& element = std::get<I>(inData);
+		if (!isValidID(std::get<0>(element))) {
+			return element;
+		}
+		return get_entry_for_index<I + 1>(inData);
+	}
+}
+
+template <typename... T>
+data_t get_entry(std::tuple<T...> const& inData)
+{
+	return get_entry_for_index<0>(inData);
+}
 
 
-#include <vector>
 template<typename T>
 auto matcher_for() {
 	return [](const data_t& data) {
@@ -32,16 +51,7 @@ auto matcher_for() {
 }
 
 
-template <std::size_t I, typename Tuple>
-void get_entry(Tuple const& inData, std::vector<data_t> & V)
-{
-	V.push_back(std::get<I>(inData));
-	if constexpr (I + 1 != std::tuple_size_v<Tuple>)
-	{
-		
-		get_entry<I + 1>(inData, V);
-	}
-}
+
 
 
 
@@ -62,15 +72,9 @@ make_combine_node(oneapi::tbb::flow::graph& g) {
 	return oneapi::tbb::flow::function_node< std::tuple <T...>, data_t>(g, oneapi::tbb::flow::unlimited,
 		[](const auto& inData) {
 			data_t output = std::get<0>(inData);
-			std::vector<data_t> V; 
-			get_entry<0>(inData, V); 
-			for (auto& n : V)
-			{
-				if (!(isValidID(std::get<0>(n))))
-				{
-					output = n; 
-				}
-			}
+			
+			output = get_entry(inData);
+			
 			return output; 
 		});
 }
