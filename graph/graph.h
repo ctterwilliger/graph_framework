@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include "start_node.h"
+#include "combine_node.h"
 using data_nodeID = std::string; 
 class graph
 {
@@ -12,26 +13,41 @@ public:
 
 	graph();
 	~graph();
+
+	//Activates the start Node
 	void run_graph(); 
+
+
+	//Waits until the graph is finished
 	void wait_graph();
+
+
 	// adds a filter node to user_nodes
 	template<typename FT>
-	void add_filter_node( data_nodeID name, size_t const& concurrency, FT  Func);
+	void add_filter_node(const data_nodeID  & nodeID, size_t const& concurrency, FT  Func);
+
 
 	// adds a proccess node to user_nodes
 	template<typename Func>
-	void add_proccess_node(data_nodeID name, size_t const& concurrency,  Func f );
+	void add_proccess_node(const data_nodeID & nodeID, size_t const& concurrency,  Func f );
 
-	// adds an edge between two nodes in graph
-	void add_edge(data_nodeID node1, data_nodeID node2);
 
-	void refresh_graph();
+	// Allows the user to add an edge to the graphs set of edges(DOES NOT LINK THE EDGES)
+	void add_edge( const data_nodeID nodeID1,const data_nodeID nodeID2);
+
+
+	//Builds the graph given the users given information
+	void build_graph();
 	
+
+	//printer functions, curretly for bugg testing 
 	void print_nodes();
 	void print_edges();
 	void print_EoG_nodes(); 
 	void print_join_nodes();
 
+
+	//TODO
 	/*template<typename Func1, typename Func2>
 	void remove_edge(typename Func1, typename Func2);*/
 	
@@ -40,20 +56,22 @@ public:
 
 
 private:
-	bool is_node_in_graph(data_nodeID node);
+	bool is_node_in_graph(const data_nodeID & nodeID);
 
-	bool is_edge_in_graph(data_nodeID node1, data_nodeID node2);
+	bool is_edge_in_graph(const data_nodeID & nodeID1, const data_nodeID & nodeID2);
 
 	void count_predecessors();
-
-	// creates a join node to proceed a node
-	void create_join(data_nodeID node);
 
 	// returns a join_node
 	auto add_join_node();
 
 	//returns a combine_node
 	auto add_combine_node();
+
+	// creates a join node to proceed a node
+	void create_join(const data_nodeID & node,const size_t & JOINS);
+
+	
 
 	//connects all the user_nodes
 	void connect_nodes();
@@ -65,23 +83,31 @@ private:
 	void find_EoG();
 
 	// finds the end of graph given a node
-	void find_end(data_nodeID); 
+	void find_end(const data_nodeID & nodeID); 
 
-
-
-	void find_start_node(); 
+	void connect_to_join(const data_nodeID& nodeID1, const data_nodeID& nodeID2, size_t JOINS);
+	
+	
 	
 	//creates a EoG_node for a given node
-	void create_EoG_node(data_nodeID node); 
+	void create_EoG_node(const data_nodeID & node); 
 
+	//TODO
+	//void clear_data(); 
 	
-	
-	
+	//void find_start_node();
+
 
 	// these print for the purposed of testing
-	void create_output_node(data_nodeID node);
+	//void create_output_node(data_nodeID node);
 
-	void create_trash_node(data_nodeID node);
+	//void create_trash_node(data_nodeID node);
+	
+	
+	
+	
+	
+	
 	// hold all the assocated nodes
 	// Map(name, pair(user node, numPredessors))
 	
@@ -104,6 +130,8 @@ private:
 	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g);
 	oneapi::tbb::flow::graph g; 
 	
+	//std::map<data_nodeID, std::shared_ptr<join_base>> joins;
+
 	
 };
 

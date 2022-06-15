@@ -1,4 +1,28 @@
 #pragma once
+
+
+class join_base {
+public:
+	virtual ~join_base() = default;
+};
+
+template <typename... T>
+class join_and_combine : public join_base {
+public:
+	join_and_combine(T...)
+	{
+
+	}
+	// some c'tor
+	// maybe other stuff...
+private:
+	oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching> join_;
+	oneapi::tbb::flow::function_node<std::tuple<T...>, data_t> combine_;
+};
+
+
+
+
 #include <vector>
 template<typename T>
 auto matcher_for() {

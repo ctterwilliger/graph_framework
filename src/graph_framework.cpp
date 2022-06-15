@@ -63,7 +63,7 @@ int main()
 	grph.print_nodes();
 	grph.print_edges(); 
 
-	grph.refresh_graph();
+	grph.build_graph();
 
 
 	grph.print_nodes();
