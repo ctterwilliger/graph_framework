@@ -5,10 +5,12 @@
 #include "type_config.h"
 #include "combine_node.h"
 #include "graph_end_node.h"
-
-
+#include <fstream>
+#include <math.h> 
 // default constructor(currently no arguments)
 graph::graph() {
+
+
 
 }
 
@@ -61,7 +63,7 @@ void graph::add_proccess_node(const data_nodeID & nodeID, size_t const& concurre
 
 
 // Allows the user to add an edge to the graphs set of edges(DOES NOT LINK THE EDGES)
-void graph::add_edge( const  data_nodeID  nodeID1, const data_nodeID  nodeID2) //THIS IS WHERE THE ISSUE IS CANNOT LINK BY REFERANCE
+void graph::add_edge( const  data_nodeID nodeID1, const data_nodeID  nodeID2) //THIS IS WHERE THE ISSUE IS CANNOT LINK BY REFERANCE
 {
 	if (is_edge_in_graph(nodeID1, nodeID2))
 	{
@@ -278,18 +280,7 @@ auto graph::add_join_node()
 
 
 //creats a join node to precess a given node
-void graph::create_join(const data_nodeID & node,const size_t & JOINS)
-{
 
-	join_nodes.emplace(node, std::make_tuple(add_join_node(), add_combine_node(), 0) );
-
-	auto& [joinNode, combineNode, num] = join_nodes.at(node); 
-	auto& [proNode, num2] = user_nodes.at(node);
-
-
-	oneapi::tbb::flow::make_edge(joinNode, combineNode);
-	oneapi::tbb::flow::make_edge(combineNode, proNode); 
-}
 
 
 
@@ -326,16 +317,36 @@ void graph::print_EoG_nodes()
 
 
 //prints joins
-void graph::print_join_nodes() {
-	for (auto &  n : join_nodes)
-	{
-		std::cout << "joins: " << n.first << std::endl;
-	}
-}
+//void graph::print_join_nodes() {
+//	for (auto &  n : join_nodes)
+//	{
+//		std::cout << "joins: " << n.first << std::endl;
+//	}
+//}
 
 
 
 // connects the join node
+
+
+void graph::create_join( data_nodeID nodeID, const size_t& JOINS)
+{
+	
+	
+
+
+	join_nodes.emplace(nodeID, std::make_tuple(add_join_node(), add_combine_node(), 0));
+
+	auto& [joinNode, combineNode, num] = join_nodes.at(nodeID);
+	auto& [proNode, num2] = user_nodes.at(nodeID);
+
+
+	oneapi::tbb::flow::make_edge(joinNode, combineNode);
+	oneapi::tbb::flow::make_edge(combineNode, proNode);
+}
+
+
+
 void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & nodeID2, size_t JOINS)
 {
 	
@@ -367,6 +378,34 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 }
 
 
+//
+//int log_base(int num, int base)
+//{
+//	return std::log(num) / std::log(base);
+//}
+//
+//
+//const int MAX_NUM_JOINS = 10;
+//void graph::big_join(const data_nodeID& nodeID1, size_t& num)
+//{
+//	int temp = num / MAX_NUM_JOINS;
+//	temp *= MAX_NUM_JOINS;
+//	
+//	int numOfTopJoins = num - temp;
+//	int numOfTopCompleteJoins = numOfTopJoins / (MAX_NUM_JOINS-1); 
+//	int lastNode = numOfTopJoins % (MAX_NUM_JOINS - 1); 
+//	int complete_rows = log_base(num, MAX_NUM_JOINS); 
+//
+//	int 	
+//
+//
+//
+//
+//
+//
+//}
+
+
 
 
 // TODO
@@ -374,3 +413,6 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 //
 //
 //}
+
+
+//big_join

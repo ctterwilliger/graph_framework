@@ -28,6 +28,7 @@ int main()
 	user_data_store DATA;
 
 	graph grph;
+
 	grph.add_proccess_node("start", flow::unlimited, [](const data_t& data) {
 		});
 
@@ -68,7 +69,7 @@ int main()
 
 	grph.print_nodes();
 	grph.print_edges();
-	grph.print_join_nodes();
+
 	grph.print_EoG_nodes(); 
 	grph.run_graph();
 	grph.wait_graph(); 

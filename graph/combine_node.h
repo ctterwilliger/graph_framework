@@ -1,24 +1,11 @@
 #pragma once
+#include "oneapi/tbb.h"
 #include <vector>
+#include "type_config.h"
 
-class join_base {
-public:
-	virtual ~join_base() = default;
-};
 
-template <typename... T>
-class join_and_combine : public join_base {
-public:
-	join_and_combine()
-	{
 
-	}
-	// some c'tor
-	// maybe other stuff...
-private:
-	oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching> join_;
-	oneapi::tbb::flow::function_node<std::tuple<T...>, data_t> combine_;
-};
+
 
 
 template <std::size_t I, typename Tuple>
@@ -56,11 +43,12 @@ auto matcher_for() {
 
 
 template<typename ...T>
-oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching>
+oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching> 
 make_join_node(oneapi::tbb::flow::graph& g)
 {
 	static_assert(std::conjunction_v<std::is_same<T, data_t>...>);
 
+		
 	return oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching>(g, matcher_for<T>()...);
 		
 }
@@ -78,6 +66,118 @@ make_combine_node(oneapi::tbb::flow::graph& g) {
 			return output; 
 		});
 }
+
+
+
+class join_base {
+public:
+	//join_base();
+	virtual ~join_base() = default;
+	 oneapi::tbb::flow::receiver<data_t> &get_join(size_t num);
+	 oneapi::tbb::flow::sender<data_t> & get_combine();
+};
+
+
+
+
+
+template <typename... T>
+class join_and_combine : public join_base {
+public:
+	join_and_combine( oneapi::tbb::flow::graph& g);
+	~join_and_combine();
+	oneapi::tbb::flow::receiver<data_t>& get_join(size_t num);
+	oneapi::tbb::flow::sender<data_t >& get_combine();
+	// some c'tor
+	// maybe other stuff...
+private:
+	oneapi::tbb::flow::graph & g; 
+	oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching> join = make_join_node<T...>(g);
+	oneapi::tbb::flow::function_node<std::tuple<T...>, data_t> combine = make_combine_node<T...>(g);
+};
+
+
+template<typename ...T>
+join_and_combine<T...>::join_and_combine( oneapi::tbb::flow::graph& g) :g(g)
+{
+	make_edge(join, combine);
+}
+
+
+template<typename ...T>
+join_and_combine<T...>::~join_and_combine() {
+
+}
+
+
+class JOIN_NODE  {
+public:
+	JOIN_NODE(size_t numOfJoins,oneapi::tbb::flow::graph & graph);
+	~JOIN_NODE();
+	oneapi::tbb::flow::receiver<data_t> & nextPort();
+	auto EndNode();
+private:
+	std::vector<std::shared_ptr<join_base>> joins; 
+	size_t curPort;
+	size_t curNode; 
+	const size_t MAXNUMOFJOINS = 10; 
+	void add_node();
+	void add_node(size_t node_size);
+	oneapi::tbb::flow::graph& g; 
+};
+
+
+template<typename ...T>
+oneapi::tbb::flow::receiver<data_t>& join_and_combine<T...>::get_join(size_t num) 
+{
+	auto& node = join;
+	auto& port = std::get<0>(node.inputports());
+	switch (num)
+	{
+	case 0:
+		port = std::get<0>(node.inputports());
+		break;
+	case 1:
+		port = std::get<1>(node.inputports());
+		break;
+	case 2:
+		port = std::get<2>(node.inputports());
+		break;
+	case 3:
+		port = std::get<3>(node.inputports());
+		break;
+	case 4:
+		port = std::get<4>(node.inputports());
+		break;
+	case 5:
+		port = std::get<5>(node.inputports());
+		break;
+	case 6:
+		port = std::get<6>(node.inputports());
+		break;
+	case 7:
+		port = std::get<7>(node.inputports());
+		break;
+	case 8:
+		port = std::get<8>(node.inputports());
+		break;
+	case 9:
+		port = std::get<9>(node.inputports());
+		break;
+	default:
+		throw 1; // not caught
+		break;
+	}
+	return port;
+}
+
+template<typename ...T>
+oneapi::tbb::flow::sender<data_t>& join_and_combine<T...>::get_combine() 
+{
+	return combine;
+}
+
+
 //oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t>
 //make_combine_node(oneapi::tbb::flow::graph& g) {
 //	return oneapi::tbb::flow::function_node< std::tuple <data_t, data_t>, data_t>(g, oneapi::tbb::flow::unlimited,
@@ -141,3 +241,6 @@ make_combine_node(oneapi::tbb::flow::graph& g) {
 //tup2 = base2;
 //return output;
 //});
+
+
+//#include "combine_node.cpp"

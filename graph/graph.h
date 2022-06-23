@@ -33,7 +33,7 @@ public:
 
 
 	// Allows the user to add an edge to the graphs set of edges(DOES NOT LINK THE EDGES)
-	void add_edge( const data_nodeID nodeID1,const data_nodeID nodeID2);
+	void add_edge( const data_nodeID  nodeID1,const data_nodeID nodeID2);
 
 
 	//Builds the graph given the users given information
@@ -45,7 +45,7 @@ public:
 	void print_edges();
 	void print_EoG_nodes(); 
 	void print_join_nodes();
-
+	void big_join(const data_nodeID  & nodeID1, size_t & num);
 
 	//TODO
 	/*template<typename Func1, typename Func2>
@@ -69,7 +69,7 @@ private:
 	auto add_combine_node();
 
 	// creates a join node to proceed a node
-	void create_join(const data_nodeID & node,const size_t & JOINS);
+	void create_join( data_nodeID  nodeID,const size_t & JOINS);
 
 	
 
@@ -112,9 +112,9 @@ private:
 	// Map(name, pair(user node, numPredessors))
 	
 
-	std::map<data_nodeID, std::shared_ptr<join_base>> joins;
-
-	std::map<data_nodeID, 
+	std::map<data_nodeID, std::shared_ptr<JOIN_NODE>>joins; 
+		
+		std::map<data_nodeID, 
 		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
 
 	// MaP(nameOfNodetoPrecess, tuple<join_node, combine_node, numOfCurConnectedNode))
@@ -122,7 +122,7 @@ private:
 		std::tuple<oneapi::tbb::flow::join_node< std::tuple < data_t, data_t>, oneapi::tbb::flow::tag_matching>, 
 		 oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t> ,
 		size_t >> join_nodes;
-
+	 
 	// Map(nameOfNodetoProceed, EoGNode), 
 	std::map < data_nodeID, 
 		oneapi::tbb::flow::multifunction_node <data_t, std::tuple < data_t, data_t>>> end_graph_nodes;
@@ -130,6 +130,9 @@ private:
 	std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> trash_nodes;
 
 	std::vector<std::pair<data_nodeID,data_nodeID>> edges; 
+
+
+
 	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g);
 	oneapi::tbb::flow::graph g; 
 	

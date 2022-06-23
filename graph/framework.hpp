@@ -7,6 +7,7 @@
 // ALLOW join nodes of Size > 2
 // Potential sorting of edges to increase contruction speed (ESPECIALLY the find EOG)
 // review of data structures
+// Join nodes of ammount infinite
 
 #pragma once
 
