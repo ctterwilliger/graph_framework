@@ -45,7 +45,7 @@ public:
 	void print_edges();
 	void print_EoG_nodes(); 
 	void print_join_nodes();
-	void big_join(const data_nodeID  & nodeID1, size_t & num);
+
 
 	//TODO
 	/*template<typename Func1, typename Func2>
@@ -61,12 +61,6 @@ private:
 	bool is_edge_in_graph(const data_nodeID & nodeID1, const data_nodeID & nodeID2);
 
 	void count_predecessors();
-
-	// returns a join_node
-	auto add_join_node();
-
-	//returns a combine_node
-	auto add_combine_node();
 
 	// creates a join node to proceed a node
 	void create_join( data_nodeID  nodeID,const size_t & JOINS);
@@ -118,11 +112,6 @@ private:
 		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
 
 	// MaP(nameOfNodetoPrecess, tuple<join_node, combine_node, numOfCurConnectedNode))
-	std::map <data_nodeID, 
-		std::tuple<oneapi::tbb::flow::join_node< std::tuple < data_t, data_t>, oneapi::tbb::flow::tag_matching>, 
-		 oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t> ,
-		size_t >> join_nodes;
-	 
 	// Map(nameOfNodetoProceed, EoGNode), 
 	std::map < data_nodeID, 
 		oneapi::tbb::flow::multifunction_node <data_t, std::tuple < data_t, data_t>>> end_graph_nodes;

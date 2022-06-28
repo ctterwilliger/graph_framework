@@ -4,6 +4,7 @@
 #include <iostream>
 #include "type_config.h"
 #include "combine_node.h"
+#include "combine_node.cpp"
 #include "graph_end_node.h"
 #include <fstream>
 #include <math.h> 
@@ -262,21 +263,6 @@ bool graph::is_edge_in_graph(const data_nodeID & nodeID1,const  data_nodeID & no
 
 
 
-// returns a join node
-auto graph::add_join_node()
-{
-	return make_join_node<data_t,data_t>(g);
-
-}
-
-
-
-// returns a combine node
- auto graph::add_combine_node()
-{
-	 return make_combine_node<data_t,data_t>(g);
-}
-
 
 
 //creats a join node to precess a given node
@@ -331,50 +317,61 @@ void graph::print_EoG_nodes()
 
 void graph::create_join( data_nodeID nodeID, const size_t& JOINS)
 {
-	
+	joins.emplace(nodeID, std::make_shared<JOIN_NODE>(JOINS, g));
+
+	auto& [proNode, num2] = user_nodes.at(nodeID); 
+	auto& JOIN = joins.at(nodeID); 
+	auto &lastNode =JOIN->EndNode();
+	lastNode->connect_to_combine(proNode);
 	
 
 
-	join_nodes.emplace(nodeID, std::make_tuple(add_join_node(), add_combine_node(), 0));
+	/*join_nodes.emplace(nodeID, std::make_tuple(add_join_node(), add_combine_node(), 0));
 
 	auto& [joinNode, combineNode, num] = join_nodes.at(nodeID);
 	auto& [proNode, num2] = user_nodes.at(nodeID);
 
 
 	oneapi::tbb::flow::make_edge(joinNode, combineNode);
-	oneapi::tbb::flow::make_edge(combineNode, proNode);
+	oneapi::tbb::flow::make_edge(combineNode, proNode);*/
 }
 
 
 
 void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & nodeID2, size_t JOINS)
 {
-	
-	auto& [node2, num2] = user_nodes.at(nodeID2);
-	auto& [node1, num1] = user_nodes.at(nodeID1);
+	auto & [node1, num1] = user_nodes.at(nodeID1);
+	auto & JOIN = joins.at(nodeID2);
 
-	if (JOINS == 2)
-	{
-		auto& [joinNode, combineNode, num] = join_nodes.at(nodeID2);
-		std::cout << num << std::endl;
-		if (num == 0)
-		{
-			oneapi::tbb::flow::make_edge(node1, std::get<0>(joinNode.input_ports()));
-			num++;
-		}
-		else if (num == 1)
-		{
-			oneapi::tbb::flow::make_edge(node1, std::get<1>(joinNode.input_ports()));
-			num++;
-		}
-		else {
-			throw 1;
-		}
-	}
-	else
-	{
-		//throw 1;
-	}
+	oneapi::tbb::flow::make_edge(node1, JOIN->nextPort()); 
+
+
+
+	//auto& [node2, num2] = user_nodes.at(nodeID2);
+	//auto& [node1, num1] = user_nodes.at(nodeID1);
+
+	//if (JOINS == 2)
+	//{
+	//	auto& [joinNode, combineNode, num] = join_nodes.at(nodeID2);
+	//	std::cout << num << std::endl;
+	//	if (num == 0)
+	//	{
+	//		oneapi::tbb::flow::make_edge(node1, std::get<0>(joinNode.input_ports()));
+	//		num++;
+	//	}
+	//	else if (num == 1)
+	//	{
+	//		oneapi::tbb::flow::make_edge(node1, std::get<1>(joinNode.input_ports()));
+	//		num++;
+	//	}
+	//	else {
+	//		throw 1;
+	//	}
+	//}
+	//else
+	//{
+	//	//throw 1;
+	//}
 }
 
 
@@ -415,4 +412,22 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 //}
 
 
-//big_join
+//big_join\
+//
+//
+//
+//// returns a join node
+//auto graph::add_join_node()
+//{
+//	return make_join_node<data_t, data_t>(g);
+//
+//}
+//
+//
+//
+//// returns a combine node
+//auto graph::add_combine_node()
+//{
+//	return make_combine_node<data_t, data_t>(g);
+//}
+//

@@ -49,9 +49,9 @@ bool isValidID(const data_ID & ID) {
 
 size_t ID_castToSizeT(const data_ID& ID)
 {
-    if (ID < 0)
+    if (ID <= 0)
     {
-        return (size_t)-ID;
+        return (size_t) -ID;
     }
     return (size_t)ID;
 }

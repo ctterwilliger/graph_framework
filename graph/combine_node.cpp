@@ -21,6 +21,7 @@ JOIN_NODE::JOIN_NODE( size_t numOfJoins, oneapi::tbb::flow::graph& graph) :g(gra
 	curNode = 0; 
 	if (numOfJoins <= 10)
 	{
+	
 		add_node(numOfJoins);
 	}
 	else
@@ -48,10 +49,13 @@ JOIN_NODE::JOIN_NODE( size_t numOfJoins, oneapi::tbb::flow::graph& graph) :g(gra
 
 void JOIN_NODE::add_node()
 {
-	auto node = make_shared<join_base>(joinNode10(g));
-	joins.push_back(node);
-	make_edge(node->get_combine(), nextPort());
-
+	 
+	joins.push_back(make_shared<joinNode10>(joinNode10(g)));
+	auto& lastNode = joins.at(joins.size()-1);
+	if (joins.size() != 1) {
+		lastNode->connect_to_node(nextPort());
+	}
+	
 }
 void JOIN_NODE::add_node(size_t  nodeSize)
 {
@@ -63,42 +67,47 @@ void JOIN_NODE::add_node(size_t  nodeSize)
 		throw 1; 
 		break; 
 	case 2:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t>(g)));
+	
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t>>(g));
 		break; 
 	case 3: 
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t,data_t>(g)));
-		break; 
-	case 4:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t,data_t>(g)));
-		break;
-	case 5:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t,data_t,data_t>(g)));
-		break;
-	case 6:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t, data_t, data_t,data_t>(g)));
-		break;
-	case 7:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t,data_t>(g)));
-		break;
-	case 8:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t, data_t,data_t>(g)));
-		break;
-	case 9:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t, data_t, data_t,data_t>(g)));
-		break;
-	case 10:
-		joins.push_back(make_shared<join_base>(join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t, data_t, data_t, data_t,data_t>(g)));
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t,data_t>>(g));
+		break; 					   
+	case 4:						  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t,data_t>>(g));
+		break;				  
+	case 5:						  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t,data_t,data_t>>(g));
+		break;					  
+	case 6:						  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t, data_t, data_t,data_t>>(g));
+		break;					  
+	case 7:						  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t,data_t>>(g));
+		break;					  
+	case 8:					  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t, data_t,data_t>>(g));
+		break;					  
+	case 9:						  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t, data_t, data_t,data_t>>(g));
+		break;					  
+	case 10:					  
+		joins.push_back(std::make_shared<join_and_combine<data_t, data_t, data_t, data_t, data_t, data_t, data_t, data_t, data_t,data_t>>(g));
 		break;
 	}
-	make_edge(joins.at(joins.size() - 1) ->get_combine(), nextPort());
+	if (joins.size() != 1) {
+		auto& lastNode = joins.back();
+		lastNode->connect_to_node(nextPort()); 
+	}
+	
 }
 
 
 oneapi::tbb::flow::receiver<data_t> & JOIN_NODE::nextPort(){
 	auto & node = joins.at(curNode);
-	auto & port = node->get_join(curPort);
+	auto & port = node->get_join_port(curPort);
 
-	
+	std::cout << "Test port: " << curPort << " " << curNode<< std::endl;
 	curPort++;
 	if (curPort % MAXNUMOFJOINS == 0) {
 		curPort = 0;
@@ -107,10 +116,20 @@ oneapi::tbb::flow::receiver<data_t> & JOIN_NODE::nextPort(){
 	return port; 
 }
 
-auto JOIN_NODE::EndNode() {
+std::shared_ptr<join_base> & JOIN_NODE::EndNode() {
 	return joins.at(0);
 }
 
 JOIN_NODE::~JOIN_NODE() {
 
+}
+
+
+
+
+
+template<typename ...T>
+join_and_combine<T...>::join_and_combine(oneapi::tbb::flow::graph& gr) : g(gr)
+{
+	make_edge(join, combine);
 }
