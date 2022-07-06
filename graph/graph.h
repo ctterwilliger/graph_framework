@@ -13,7 +13,7 @@ public:
 
 	graph();
 	~graph();
-
+	void draw_user_graph(std::string file);
 	//Activates the start Node
 	void run_graph(); 
 
@@ -44,7 +44,12 @@ public:
 	void print_nodes();
 	void print_edges();
 	void print_EoG_nodes(); 
-	void print_join_nodes();
+	
+	
+	void add_start_node(const data_nodeID, std::vector <base_data> F); 
+
+
+	void draw_frame_graph(std::string file);
 
 
 	//TODO
@@ -56,6 +61,7 @@ public:
 
 
 private:
+	oneapi::tbb::flow::graph g;
 	bool is_node_in_graph(const data_nodeID & nodeID);
 
 	bool is_edge_in_graph(const data_nodeID & nodeID1, const data_nodeID & nodeID2);
@@ -108,23 +114,25 @@ private:
 
 	std::map<data_nodeID, std::shared_ptr<JOIN_NODE>>joins; 
 		
-		std::map<data_nodeID, 
+	std::map<data_nodeID, 
 		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
 
 	// MaP(nameOfNodetoPrecess, tuple<join_node, combine_node, numOfCurConnectedNode))
 	// Map(nameOfNodetoProceed, EoGNode), 
 	std::map < data_nodeID, 
 		oneapi::tbb::flow::multifunction_node <data_t, std::tuple < data_t, data_t>>> end_graph_nodes;
-	std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> output_nodes;
-	std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> trash_nodes;
+
+
+	//std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> output_nodes;
+	//std::map<data_nodeID, oneapi::tbb::flow::function_node< data_t>> trash_nodes;
 
 	std::vector<std::pair<data_nodeID,data_nodeID>> edges; 
 
-
-
-	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g);
-	oneapi::tbb::flow::graph g; 
+	data_nodeID firstNode; 
+	std::vector<base_data> inputs; 
+	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g, inputs ); 
 	
+	std::vector<data_nodeID> EoGs; 
 	
 
 	

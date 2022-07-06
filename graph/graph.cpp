@@ -9,13 +9,91 @@
 #include <fstream>
 #include <math.h> 
 // default constructor(currently no arguments)
-graph::graph() {
+graph::graph()  {
 
-
+	
 
 }
 
+void graph::draw_user_graph(std::string file)
+{
+	
+	std::ofstream f(file);
+	if (f.is_open())
+	{
+		f << "digraph graphname {\n";
+		f << "start [lable =\"start\"]\n";
+		for (const auto& n : user_nodes)
+		{
+			f << n.first << " ["<< "lable = \""<< n.first<<"\"]\n"; 
+		}
 
+		for (const auto& n : edges)
+		{
+			f << n.first << " -> " << n.second << ";\n";
+		}
+		f << "start -> " << firstNode << "\n"; 
+		f << "}";
+	}
+	
+	//if (file.is_open())
+	//{
+	//	file << "graph graphname {\n";
+	//	/*for (auto &  n:user_nodes) {
+	//		file << n.first << '\n'; 
+	//	}*/
+	//}
+
+}
+
+void graph::draw_frame_graph(std::string file)
+{
+
+	std::ofstream f(file);
+	if (f.is_open())
+	{
+		f << "digraph graphname {\n";
+		f << "start [lable =\"start\"];\n";
+		f << "EoG [lable =\"EoG\"];\n";
+		for (const auto& n : user_nodes)
+		{
+			f << n.first << " [" << "lable = \"" << n.first << "\"];\n";
+		}
+		for (auto & n:joins)
+		{
+			f << n.second->listJoins(n.first);
+			f << n.second->innerJoins(n.first);
+		}
+		for (const auto& [edge1, edge2] : edges)
+		{
+			
+			auto& [node, num] = user_nodes.at(edge2);
+			
+			if (num == 1)
+			{
+				f << edge1 << " -> " << edge2 << ";\n";
+			}
+			else
+			{
+				
+				auto & node = joins.at(edge2); 
+				f << edge1 << " -> j" << edge2  <<
+					(node->nextNodeToDraw()) / 10 << ";\n";
+				
+
+			}
+			
+		}
+		f << "start -> " << firstNode << "\n";
+
+		for (const auto& n : EoGs)
+		{
+			f << n << " -> EoG\n"; 
+		}
+		f << "}";
+	}
+	f.close();
+}
 
 //defualt deconstructor
 graph::~graph() {
@@ -108,10 +186,21 @@ void graph::build_graph() {
 	//find_start_node(); 
 
 	
-	make_edge(start_node, (user_nodes.at("start")).first) ;
+	make_edge(start_node, (user_nodes.at(firstNode)).first);
 	
 }
 
+
+void graph::add_start_node(const data_nodeID Node, std::vector<base_data> F) {
+	if(user_nodes.count(Node) != 0){
+		inputs = F;
+		firstNode = Node;
+	}
+	else
+	{
+		throw 7; 
+	}
+}
 
 
 // counts the number of DIRECT predesessors a given node has
@@ -215,6 +304,7 @@ void graph::find_end(const data_nodeID & curNodeID)
 			auto& [nodeAtEnd, num] = user_nodes.at(curNodeID);
 			auto& EoG = end_graph_nodes.at(curNodeID);
 			make_edge(nodeAtEnd, EoG);
+			EoGs.push_back(curNodeID); 
 		}
 	}
 }
@@ -401,7 +491,6 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 //
 //
 //}
-
 
 
 

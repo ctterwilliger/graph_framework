@@ -9,6 +9,17 @@
       "cmakeCommandArgs": " -DTBB_DIR=/Users/tytwi/AppData/Local/Temp/my_installed_onetbb/lib/cmake/TBB",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ]
+    },
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": " -DTBB_DIR=/Users/tytwi/AppData/Local/Temp/my_installed_onetbb/lib/cmake/TBB",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]
 }

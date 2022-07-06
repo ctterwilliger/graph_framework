@@ -16,7 +16,7 @@ int log_baseB(size_t num, size_t base)
 
 JOIN_NODE::JOIN_NODE( size_t numOfJoins, oneapi::tbb::flow::graph& graph) :g(graph)
 {
-	 
+	
 	curPort = 0; 
 	curNode = 0; 
 	if (numOfJoins <= 10)
@@ -43,13 +43,13 @@ JOIN_NODE::JOIN_NODE( size_t numOfJoins, oneapi::tbb::flow::graph& graph) :g(gra
 		}
 		add_node(numOfJoins - curNumOfJoins + 1);
 	}
+	drawplace = curPort; 
 }
 
 
 
 void JOIN_NODE::add_node()
 {
-	 
 	joins.push_back(make_shared<joinNode10>(joinNode10(g)));
 	auto& lastNode = joins.at(joins.size()-1);
 	if (joins.size() != 1) {
@@ -106,8 +106,6 @@ void JOIN_NODE::add_node(size_t  nodeSize)
 oneapi::tbb::flow::receiver<data_t> & JOIN_NODE::nextPort(){
 	auto & node = joins.at(curNode);
 	auto & port = node->get_join_port(curPort);
-
-	std::cout << "Test port: " << curPort << " " << curNode<< std::endl;
 	curPort++;
 	if (curPort % MAXNUMOFJOINS == 0) {
 		curPort = 0;
@@ -132,4 +130,54 @@ template<typename ...T>
 join_and_combine<T...>::join_and_combine(oneapi::tbb::flow::graph& gr) : g(gr)
 {
 	make_edge(join, combine);
+}
+
+
+std::string JOIN_NODE::listJoins(std::string ID)
+{
+	std::string output = "";
+	for(int count = 0; count < joins.size(); count++)
+	{
+		output += "j";
+		output += ID;
+		
+		output += std::to_string(count);
+		output += "[lable =\"";
+		output += ID + "join"+ std::to_string(count);
+		output += +"\"];\n";
+	}
+	return output;
+}
+
+std::string JOIN_NODE::innerJoins(std::string ID)
+{
+	std::string output = "j" +ID + "0 -> " + ID + ";\n";
+	int count = 0;
+	
+	for (int i = 1; i < joins.size(); i++)
+	{
+		output += ID;
+		output += "-";
+		output += std::to_string(count);
+		output += "->";
+		output += "j";
+		output += ID;
+		output += std::to_string(count);
+		output += ";\n"; 
+		if ((i % (10)) == 0)
+		{
+			count++;
+		}
+	}
+
+	return output; 
+}
+
+
+int JOIN_NODE::nextNodeToDraw()
+{
+	
+	drawplace++; 
+	return drawplace; 
+	
 }

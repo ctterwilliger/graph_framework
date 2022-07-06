@@ -6,9 +6,12 @@ cmake_minimum_required (VERSION 3.8)
 project ("graph_framework")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_BUILD_TYPE RelwithDebugInfo)
+
 find_package(TBB REQUIRED)
 add_subdirectory("graph")
 add_subdirectory(src)
+add_subdirectory("test")
 # Add source to this project's executable.
 add_executable ("graph_framework"  
 
@@ -22,5 +25,5 @@ add_executable ("graph_framework"
  )
 target_link_libraries(graph_framework PRIVATE TBB::tbb)
 # TODO: Add tests and install targets if needed.
-include(CTest)
-add_subdirectory(test)
+
+#add_subdirectory(test)
