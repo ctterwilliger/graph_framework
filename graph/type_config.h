@@ -3,7 +3,7 @@
 #include <memory>
 
 
-using data_ID = long;
+using data_ID = int;
 
 
 
@@ -35,9 +35,9 @@ using data_ID = long;
 //    std::vector<std::unique_ptr<base_data>> data_;
 //};
 
-using base_data = std::tuple<int, int>; 
-using data_obj = std::shared_ptr<std::tuple<int,int>>;
-using data_t = std::tuple< data_ID, data_obj>;
+using base_data = std::tuple<int, int>;
+using data_obj = std::tuple< data_ID, base_data>;
+using data_t = std::shared_ptr<data_obj>;
 // TODO: Reference additional headers your program requires here.
 
 bool isValidID(const data_ID & ID) {
@@ -50,16 +50,16 @@ bool isValidID(const data_ID & ID) {
 
 size_t ID_castToSizeT(const data_ID& ID)
 {
-    if (ID <= 0)
+    if (ID < 0)
     {
-        return (size_t) -ID;
+        return (size_t) (-ID);
     }
     return (size_t)ID;
 }
 
 size_t getSizeT_ID(const data_t& data)
 {
-    return ID_castToSizeT(std::get<0>(data));
+    return ID_castToSizeT(std::get<0>(*data));
 }
 
 bool isEquivID(data_ID ID1, data_ID ID2)

@@ -1,6 +1,6 @@
 #pragma once
-#include "oneapi/tbb.h"
 #include <vector>
+#include "oneapi/tbb.h"
 #include "type_config.h"
 
 
@@ -17,7 +17,7 @@ data_t get_entry_for_index(Tuple const& inData)
 	}
 	else {
 		auto& element = std::get<I>(inData);
-		if (!isValidID(std::get<0>(element))) {
+		if (!isValidID(std::get<0>(*element))) {
 			return element;
 		}
 		return get_entry_for_index<I + 1>(inData);
@@ -34,6 +34,10 @@ data_t get_entry(std::tuple<T...> const& inData)
 template<typename T>
 auto matcher_for() {
 	return [](const data_t& data) { 
+
+	
+		
+		
 		return getSizeT_ID(data);
 	};
 }
@@ -60,12 +64,12 @@ make_combine_node(oneapi::tbb::flow::graph& g) {
 	static_assert(std::conjunction_v<std::is_same<T, data_t>...>);
 	return oneapi::tbb::flow::function_node< std::tuple <T...>, data_t>(g, oneapi::tbb::flow::unlimited,
 		[](const auto& inData) {
-		
-			data_t output = std::get<0>(inData);
+			auto output = std::get<0>(inData);
 			
 			output = get_entry(inData);
-			
+			//std::cout << (int) std::get<0>(*output) << std::endl;
 			return output; 
+
 		});
 }
 
@@ -122,6 +126,7 @@ private:
 	oneapi::tbb::flow::graph& g;
 	oneapi::tbb::flow::join_node<std::tuple<T...>, oneapi::tbb::flow::tag_matching> join = make_join_node<T...>(g);
 	oneapi::tbb::flow::function_node<std::tuple<T...>, data_t> combine = make_combine_node<T...>(g);
+	
 };
 
 class JOIN_NODE {
@@ -149,82 +154,6 @@ private:
 
 
 
-template <typename... T>
-void join_and_combine<T...>::connect_to_node(oneapi::tbb::flow::receiver<data_t> & port) {
-	make_edge(combine, port);
-}
-
-
-template <typename ...T> 
-oneapi::tbb::flow::receiver<data_t> & join_and_combine<T...>::get_join_port(size_t & num) {
-	auto& node = join;
-	switch (num)
-	{
-	case 0:
-		if constexpr (sizeof... (T) >= 1) {
-
-			return std::get<0>(node.input_ports());
-		}
-		break;
-	case 1:
-		if constexpr (sizeof... (T) >= 2) {
-
-			return std::get<1>(node.input_ports());
-		}
-		break;
-	case 2:
-
-		if constexpr (sizeof... (T) >= 3) {
-			return  std::get<2>(node.input_ports());
-		}
-		break;
-	case 3:
-		if constexpr (sizeof... (T) >= 4) {
-			return std::get<3>(node.input_ports());
-		}
-		break;
-	case 4:
-		if constexpr (sizeof... (T) >= 5) {
-			return std::get<4>(node.input_ports());
-		}
-		break;
-	case 5:
-		if constexpr (sizeof... (T) >= 6) {
-			return std::get<5>(node.input_ports());
-		}
-		break;
-	case 6:
-		if constexpr (sizeof... (T) >= 7) {
-			return  std::get<6>(node.input_ports());
-		}
-		break;
-	case 7:
-		if constexpr (sizeof... (T) >= 8) {
-			return std::get<7>(node.input_ports());
-		}
-		break;
-	case 8:
-		if constexpr (sizeof... (T) >= 9) {
-			return std::get<8>(node.input_ports());
-		}
-		break;
-	case 9:
-		if constexpr (sizeof... (T) >= 10) {
-			return std::get<9>(node.input_ports());
-		}
-		break;
-	default:
-		return std::get<0>(node.input_ports());
-	}
-	
-}
-
-
-
-template <typename... T>
-void join_and_combine<T...>::connect_to_combine(oneapi::tbb::flow::function_node<data_t, data_t>& node) {
-	make_edge(combine, node); 
-}
 
 
 

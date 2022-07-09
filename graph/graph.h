@@ -1,9 +1,10 @@
 #pragma once
 #include <utility>
 #include <vector>
-#include "type_config.h"
 #include <map>
 #include <string>
+
+#include "type_config.h"
 #include "start_node.h"
 #include "combine_node.h"
 using data_nodeID = std::string; 
@@ -50,7 +51,8 @@ public:
 
 
 	void draw_frame_graph(std::string file);
-
+	void get_trash(std::vector<std::vector<base_data>>& V);
+	void get_output(std::vector<std::vector<base_data>>& V);
 
 	//TODO
 	/*template<typename Func1, typename Func2>
@@ -130,8 +132,9 @@ private:
 
 	data_nodeID firstNode; 
 	std::vector<base_data> inputs; 
-	oneapi::tbb::flow::input_node<data_t> start_node = make_start_node(g, inputs ); 
-	
+	std::vector<oneapi::tbb::flow::input_node<data_t>> start_node;
+	std::vector < std::vector<base_data>> valid_outputs;
+	std::vector <std::vector<base_data>> trash_outputs;
 	std::vector<data_nodeID> EoGs; 
 	
 

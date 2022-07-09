@@ -10,7 +10,7 @@ oneapi::tbb::flow::function_node<data_t, data_t>
 make_proccess_node(oneapi::tbb::flow::graph& g, size_t  concurrency, Func  f) {
 	return oneapi::tbb::flow::function_node<data_t, data_t> (g, concurrency, [&](const data_t& data) 
 		{
-			auto const & [ID, data_ptr] = data;
+			auto const & [ID, data_ptr] = *data;
 
 			if (isValidID(ID))
 			{

@@ -4,10 +4,11 @@
 // TODO!!!!!!!!!!
 // ALLOW ACCESS OF DATA FOR USER potialt pointer to vector(or to data_t) instead of vector of point
 // HANDLE EXCEPTIONS
-// ALLOW join nodes of Size > 2
 // Potential sorting of edges to increase contruction speed (ESPECIALLY the find EOG)
 // review of data structures
-// Join nodes of ammount infinite
+// decontrution of graphs
+// changing graphs around
+
 
 #pragma once
 

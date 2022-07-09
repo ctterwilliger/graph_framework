@@ -104,7 +104,8 @@ graph::~graph() {
 
 // runs the graph by activating the start node
 void graph::run_graph() {
-	start_node.activate();
+	if(start_node.size() != 0)
+	start_node.at(0).activate();
 }
 
 
@@ -184,10 +185,11 @@ void graph::build_graph() {
 
 	//TODO GIVE a PROPER START NODE
 	//find_start_node(); 
-
 	
-	make_edge(start_node, (user_nodes.at(firstNode)).first);
-	
+	if ((start_node.size() != 0) && (user_nodes.count(firstNode) != 0))
+	{
+		make_edge(start_node.at(0), (user_nodes.at(firstNode)).first);
+	}
 }
 
 
@@ -195,6 +197,7 @@ void graph::add_start_node(const data_nodeID Node, std::vector<base_data> F) {
 	if(user_nodes.count(Node) != 0){
 		inputs = F;
 		firstNode = Node;
+		start_node.push_back( make_start_node(g, inputs));
 	}
 	else
 	{
@@ -314,7 +317,11 @@ void graph::find_end(const data_nodeID & curNodeID)
 //creates an EoG node to proceed a given node
 void graph::create_EoG_node(const data_nodeID & node)
 {
-	end_graph_nodes.emplace(node, make_end_of_graph_node(g));
+	std::vector<base_data> trash;
+	std::vector<base_data> valid;
+	trash_outputs.push_back(trash);
+	valid_outputs.push_back(valid);
+	end_graph_nodes.emplace(node, make_end_of_graph_node(g,valid_outputs.back(),trash_outputs.back()));
 }
 
 
@@ -426,7 +433,15 @@ void graph::create_join( data_nodeID nodeID, const size_t& JOINS)
 	oneapi::tbb::flow::make_edge(combineNode, proNode);*/
 }
 
+void graph::get_trash(std::vector<std::vector<base_data>>& V)
+{
+	V = trash_outputs;
+}
 
+void graph::get_output(std::vector<std::vector<base_data>>& V)
+{
+	V = valid_outputs; 
+}
 
 void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & nodeID2, size_t JOINS)
 {
@@ -520,3 +535,5 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 //	return make_combine_node<data_t, data_t>(g);
 //}
 //
+
+
