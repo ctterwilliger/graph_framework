@@ -8,8 +8,8 @@
 // review of data structures
 // decontrution of graphs
 // changing graphs around
-
-
+// add optimization for EoG choices
+// add mutliple start edges
 #pragma once
 
 

@@ -19,7 +19,7 @@ bool oneNode()
 {
 	graph g;
 	g.add_proccess_node("1", oneapi::tbb::flow::unlimited, [](const data_t & data) {
-	
+		auto& [ID, inData] = *data; 
 		}
 	);
 	g.build_graph();
@@ -79,12 +79,12 @@ bool multiEoGs()
 
 		}
 	);
-
+	//std::cout << "Test" << endl; 
 	g.add_edge("1", "2");
 	g.add_edge("1", "3");
 
 	std::vector<base_data> V;
-	V.push_back(std::make_tuple(1, 1));
+	V.push_back(std::make_tuple(1, -1));
 	g.add_start_node("1", V);
 	g.build_graph();
 	g.run_graph();
@@ -179,7 +179,7 @@ bool largeJoin()
 	);
 	g.add_edge(to_string(0), "a4");
 	g.add_edge("a1", to_string(0));
-	for (int i = 1; i < 101; i++)
+	for (int i = 1; i < 123; i++)
 	{
 		g.add_proccess_node(to_string(i), flow::unlimited, [](const data_t& data) {
 

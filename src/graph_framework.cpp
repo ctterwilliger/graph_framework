@@ -48,7 +48,7 @@ int main()
 	);
 	g.add_edge(to_string(0), "a4");
 	g.add_edge("a1", to_string(0));
-	for(int i = 1; i < 1001; i++)
+	for(int i = 1; i < 21; i++)
 	{
 		g.add_proccess_node(to_string(i), flow::unlimited, [](const data_t& data) {
 
@@ -73,7 +73,7 @@ int main()
 	std::vector<std::vector<base_data>> O;
 
 
-	
+
 	g.build_graph(); 
 	g.draw_user_graph("test.dot"); 
 	g.draw_frame_graph("frame.dot");

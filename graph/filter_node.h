@@ -11,7 +11,7 @@ make_filter_node(oneapi::tbb::flow::graph& g, size_t  concurrency, FT f) {
 			if (isValidID(ID))
 			{
 				if (f(data)) {
-					std::cout << "make id neg" << std::endl; 
+					//std::cout << "make id neg" << std::endl; 
 					ID = -ID;
 				}
 			}

@@ -5,7 +5,7 @@
 #include <tuple>
 #include <iostream>
 #include "type_config.h"
-#include "oneapi/tbb.h"
+#include <oneapi/tbb.h>
 oneapi::tbb::flow::input_node<data_t>
 make_start_node(oneapi::tbb::flow::graph& g, std::vector<base_data> & F) {
 	return oneapi::tbb::flow::input_node<data_t>(g, [count = 0, F](oneapi::tbb::flow_control& fc) mutable

@@ -276,11 +276,16 @@ void graph::connect_nodes()
 void graph::find_EoG()
 {
 	// VERY SLOW n^3 logn runtime 
-	for (auto& n : user_nodes)
+	if (firstNode.size() != 0)
 	{
-		auto& [nodeID, pair] = n; 
-		find_end(nodeID); 
+		find_end(firstNode);
 	}
+	
+	//for (auto& n : user_nodes)
+	//{
+	//	auto& [nodeID, pair] = n; 
+	//	find_end(nodeID); 
+	//}
 }
 
 
@@ -291,11 +296,10 @@ void graph::find_end(const data_nodeID & curNodeID)
 	bool atEnd = true;
 	for (auto& n : edges)
 	{
-		auto& [nodeID1, nodeID2] = n;
-		if (nodeID1 == curNodeID)
+		if (n.first == curNodeID)
 		{
-			atEnd = false; 
-			find_end(nodeID2); 
+			find_end(n.second);
+			atEnd = false;
 		}
 	}
 	if (atEnd)
@@ -307,9 +311,32 @@ void graph::find_end(const data_nodeID & curNodeID)
 			auto& [nodeAtEnd, num] = user_nodes.at(curNodeID);
 			auto& EoG = end_graph_nodes.at(curNodeID);
 			make_edge(nodeAtEnd, EoG);
-			EoGs.push_back(curNodeID); 
+			EoGs.push_back(curNodeID);
 		}
 	}
+
+	//bool atEnd = true;
+	//for (auto& n : edges)
+	//{
+	//	auto& [nodeID1, nodeID2] = n;
+	//	if (nodeID1 == curNodeID)
+	//	{
+	//		atEnd = false; 
+	//		find_end(nodeID2); 
+	//	}
+	//}
+	//if (atEnd)
+	//{
+	//	// creates a node if it hasnt been found
+	//	if (end_graph_nodes.contains(curNodeID) == 0)
+	//	{
+	//		create_EoG_node(curNodeID);
+	//		auto& [nodeAtEnd, num] = user_nodes.at(curNodeID);
+	//		auto& EoG = end_graph_nodes.at(curNodeID);
+	//		make_edge(nodeAtEnd, EoG);
+	//		EoGs.push_back(curNodeID); 
+	//	}
+	//}
 }
 
 
@@ -317,8 +344,8 @@ void graph::find_end(const data_nodeID & curNodeID)
 //creates an EoG node to proceed a given node
 void graph::create_EoG_node(const data_nodeID & node)
 {
-	std::vector<base_data> trash;
-	std::vector<base_data> valid;
+	oneapi::tbb::concurrent_vector<base_data> trash;
+	oneapi::tbb::concurrent_vector<base_data> valid;
 	trash_outputs.push_back(trash);
 	valid_outputs.push_back(valid);
 	end_graph_nodes.emplace(node, make_end_of_graph_node(g,valid_outputs.back(),trash_outputs.back()));
@@ -435,12 +462,33 @@ void graph::create_join( data_nodeID nodeID, const size_t& JOINS)
 
 void graph::get_trash(std::vector<std::vector<base_data>>& V)
 {
-	V = trash_outputs;
+	V.resize(trash_outputs.size());
+	int i = 0;
+	for (auto & n: trash_outputs)
+	{
+		for (auto& v : n)
+		{
+			V.at(i).push_back(v);
+			
+		}
+		i++;
+	}
+	
 }
 
 void graph::get_output(std::vector<std::vector<base_data>>& V)
 {
-	V = valid_outputs; 
+	V.resize(valid_outputs.size());
+	int i =0;
+	for (auto& n : valid_outputs)
+	{
+		for (auto& v : n)
+		{
+			V.at(i).push_back(v);
+
+		}
+		i++;
+	}
 }
 
 void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & nodeID2, size_t JOINS)

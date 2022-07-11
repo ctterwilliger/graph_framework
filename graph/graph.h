@@ -133,8 +133,8 @@ private:
 	data_nodeID firstNode; 
 	std::vector<base_data> inputs; 
 	std::vector<oneapi::tbb::flow::input_node<data_t>> start_node;
-	std::vector < std::vector<base_data>> valid_outputs;
-	std::vector <std::vector<base_data>> trash_outputs;
+	oneapi::tbb::concurrent_vector < oneapi::tbb::concurrent_vector<base_data>> valid_outputs;
+	oneapi::tbb::concurrent_vector <oneapi::tbb::concurrent_vector<base_data>> trash_outputs;
 	std::vector<data_nodeID> EoGs; 
 	
 

@@ -16,7 +16,8 @@ add_library(graph INTERFACE
 	"proccessor_node.cpp"
 	 "type_config.h"
 	 "combine_node.cpp"
-	 "combine_node.h")
+	 "combine_node.h"
+	 "start_node.h")
 
 
 # Add source to this project's executable.
