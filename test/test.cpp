@@ -5,6 +5,7 @@
 #include "../graph/framework.hpp"
 #include "test_contruction.h"
 #include "filter_testing.h"
+#include "testMath.h"
 //#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
@@ -38,6 +39,11 @@ TEST_CASE("Flag Testing" "[Flags]")
 	CHECK(testMultipleFiltersAndOutputs());
 }
 
+
+TEST_CASE("MATH Testing" "[MATH]")
+{
+	CHECK(testPrimeSieve());
+}
 
 
 //JOIN NODE TESTING

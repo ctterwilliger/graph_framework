@@ -19,7 +19,7 @@ bool oneNode()
 {
 	graph g;
 	g.add_proccess_node("1", oneapi::tbb::flow::unlimited, [](const data_t & data) {
-		auto& [ID, inData] = *data; 
+		auto& [ID, inData] = data; 
 		}
 	);
 	g.build_graph();

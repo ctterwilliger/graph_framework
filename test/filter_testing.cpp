@@ -108,7 +108,7 @@ bool testFilterAndJoin() {
 
 bool isEven(int i)
 {
-	return !(i & 1);
+	return ((i % 2)==0);
 }
 
 
@@ -120,8 +120,8 @@ graph g;
 
 
 g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-	auto& [ID, inData] = *data;
-	return !(isEven(std::get<0>(inData)));
+	auto& [ID, inData] = data;
+	return !(isEven(std::get<0>(*inData)));
 	});
 
 std::vector<base_data> inputs;
@@ -175,11 +175,16 @@ bool isPrime(int i)
 {
 	
 	int stop = sqrt(i) + 1;
+	if (i == 2)
+	{
+		return true; 
 
+	}
 	if (!(i & 1))
 	{
 		return false;
 	}
+	
 
 	for (long j = 3; j < stop; j = j + 2)
 	{
@@ -199,8 +204,8 @@ bool testPrimeFilter()
 
 
 	g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-		auto& [ID, inData] = *data;
-		return !(isPrime(std::get<0>(inData)));
+		auto& [ID, inData] = data;
+		return !(isPrime(std::get<0>(*inData)));
 		});
 
 	std::vector<base_data> inputs;
@@ -253,17 +258,17 @@ bool testMultipleFiltersAndOutputs()
 		});
 
 	g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-		auto& [ID, inData] = *data;
-		return !(isEven(std::get<0>(inData)));
+		auto& [ID, inData] = data;
+		return !(isEven(std::get<0>(*inData)));
 		});
 	g.add_filter_node("2", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-		auto& [ID, inData] = *data;
-		return !(isPrime(std::get<0>(inData)));
+		auto& [ID, inData] = data;
+		return !(isPrime(std::get<0>(*inData)));
 		});
 
 	std::vector<base_data> inputs;
-	int total = 1000;
-	for (int i = 1; i < total; i++)
+	int total = 20;
+	for (int i = 0; i < total; i++)
 	{
 		inputs.push_back(std::tuple(i, -i));
 	}
@@ -279,33 +284,38 @@ bool testMultipleFiltersAndOutputs()
 	g.get_output(O);
 	g.get_trash(T);
 
-	std::cout << "test" << std::endl; 
+	
 	for (auto& n : T.at(0))
 	{
+		
 		if (isEven(std::get<0>(n)))
 		{
+			
 			return false;
 		}
 	}
-	std::cout << "test" << std::endl;
+	
 	for (auto& n : O.at(0))
 	{
-		if (!isEven(std::get<0>(n)))
+		
+		if (!isEven(std::get<1>(n)))
 		{
 			return false;
 		}
 	}
-	std::cout << "test" << std::endl;
+	
 	for (auto& n : T.at(1))
 	{
+		
 		if (isPrime(std::get<0>(n)))
 		{
 			return false;
 		}
 	}
-	std::cout << "test" << std::endl;
+	
 	for (auto& n : O.at(1))
 	{
+		
 		if (!isPrime(std::get<0>(n)))
 		{
 			return false;

@@ -17,7 +17,7 @@ data_t get_entry_for_index(Tuple const& inData)
 	}
 	else {
 		auto& element = std::get<I>(inData);
-		if (!isValidID(std::get<0>(*element))) {
+		if (!isValidID(std::get<0>(element))) {
 			return element;
 		}
 		return get_entry_for_index<I + 1>(inData);
