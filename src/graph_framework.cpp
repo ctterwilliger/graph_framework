@@ -19,76 +19,65 @@ using namespace oneapi::tbb;
 
 
 
-
+int trun(double num)
+{
+	return (int)num;
+}
 
 int main()
 {
-	
-	graph g; 
-	
 
-	g.add_filter_node("a1", 1, [](const data_t& data) {
-		return false;
+	graph g;
 
+	
+	g.add_proccess_node("1", "key1", "key2", [](double num) {
+		//ut << num << "test" << std::endl;
+		return (int)num;
 		});
+	std::vector<data_obj> V;
 
-	
-	g.add_proccess_node("a4", flow::unlimited, [](const data_t& data) {
-
-
-		});
-
-
-	g.add_filter_node("0", flow::unlimited, [](const data_t& data) {
-	  
-		return false;
-		}
-	
-	
-	);
-	g.add_edge(to_string(0), "a4");
-	g.add_edge("a1", to_string(0));
-	for(int i = 1; i < 21; i++)
-	{
-		g.add_proccess_node(to_string(i), flow::unlimited, [](const data_t& data) {
-
-
-			});
-		g.add_edge(to_string(i), "a4"); 
-		g.add_edge("a1", to_string(i)); 
-	}
-	
-	
-
-	std::vector<base_data> V;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i <10;i++)
 	{
 		
-		V.push_back(std::make_tuple(i, -i));
+		auto temp = std::make_shared<base_data>();
+
+		temp->addData<double>("key1", 1);
+		//cout << temp->getData<double>("key1");
+		V.push_back(temp);
 	}
 
-	g.add_start_node("a1",V);
 
 
-	std::vector<std::vector<base_data>> O;
+	g.add_start_node("1", V);
+	
+	
+
+	
+
+	//g.add_start_node("a1",V);
 
 
+	std::vector<std::vector<data_obj>> O;
+	std::vector<std::vector<data_obj>> T;
 
+	
 	g.build_graph(); 
 	g.draw_user_graph("test.dot"); 
 	g.draw_frame_graph("frame.dot");
+	//cout << "test";
 	g.run_graph();
 	g.wait_graph(); 
 	g.get_output(O);
-	for (auto& j : O)
-	{
-		for (auto& n : j)
-		{
-			auto& [int1, int2] = n; 
-			cout << int1 << " " << int2 << endl;;
-		}
-	}
-	
+	g.get_trash(T); 
+	//for (auto& j : O)
+	//{
+	//	for (auto& n : j)
+	//	{
+	//		//auto& [int1, int2] = n; 
+	//		//cout << int1 << " " << int2 << endl;;
+	//	}
+	//}
+	//
 	
 	return 0; 
 }

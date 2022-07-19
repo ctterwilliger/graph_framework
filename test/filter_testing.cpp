@@ -8,24 +8,26 @@ bool testSingleFilter() {
 
 
 
-	g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
 		//auto& [ID, inData] = *data;
 		return true;
 		});
 
-	std::vector<base_data> inputs;
+	std::vector<data_obj> inputs;
 	int total = 1000;
 	for (int i = 0; i < total; i++)
 	{
-		inputs.push_back(std::tuple(i, -i));
+		auto temp = std::make_shared<base_data>();
+
+		temp->addData<int>("key1", 1);
 	}
 	g.add_start_node("1", inputs);
 
 	g.build_graph();
 	g.run_graph();
 	g.wait_graph();
-	std::vector<std::vector <base_data>> O;
-	std::vector<std::vector <base_data>> T;
+	std::vector<std::vector <data_obj>> O;
+	std::vector<std::vector <data_obj>> T;
 
 	g.get_output(O);
 	g.get_trash(T);
@@ -49,23 +51,23 @@ bool testFilterAndJoin() {
 
 
 
-	g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("1", "key1", "key2", [](const data_t& data) {
 		//auto& [ID, inData] = *data;
 		return true;
 		});
-	g.add_filter_node("2", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("2", "key1", "key2", [](const data_t& data) {
 		//auto& [ID, inData] = *data;
 		return false;
 		});
-	g.add_proccess_node("3", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("3", "key1", "key2", [](const data_t& data) {
 		//auto& [ID, inData] = *data;
-		
+		return 1;
 		});
-	g.add_proccess_node("4", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("4", "key1", "key2", [](const data_t& data) {
 		//auto& [ID, inData] = *data;
-		
+		return 1;
 		});
-	g.add_proccess_node("0", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("0", "key1", "key2", [](const data_t& data) {
 		//auto& [ID, inData] = *data;
 		return false;
 		});
@@ -77,22 +79,28 @@ bool testFilterAndJoin() {
 	g.add_edge("2", "4");
 	g.add_edge("3", "4");
 
-	std::vector<base_data> inputs;
+	std::vector<data_obj> inputs;
 	int total = 1000;
 	for (int i = 0; i < total; i++)
 	{
-		inputs.push_back(std::tuple(i, -i));
+		auto temp = std::make_shared<base_data>();
+
+		temp->addData<int>("key1", 1);
 	}
 	g.add_start_node("1", inputs);
 
 	g.build_graph();
 	g.run_graph();
 	g.wait_graph();
-	std::vector<std::vector <base_data>> O;
-	std::vector<std::vector <base_data>> T;
+	
+
+	std::vector<std::vector <data_obj>> O;
+	std::vector<std::vector <data_obj>> T;
 
 	g.get_output(O);
 	g.get_trash(T);
+
+	
 	if (O.size() != 1)
 	{
 		return false;
@@ -119,25 +127,28 @@ graph g;
 
 
 
-g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-	auto& [ID, inData] = data;
-	return !(isEven(std::get<0>(*inData)));
+g.add_proccess_node("1", "key1", "key2", [](int i) {
+	
+	return !(isEven(i));
 	});
 
-std::vector<base_data> inputs;
+std::vector<data_obj> inputs;
 int total = 1000;
 for (int i = 0; i < total; i++)
 {
-	inputs.push_back(std::tuple(i, -i));
+	auto temp = std::make_shared<base_data>();
+
+	temp->addData<int>("key1", 1);
 }
 g.add_start_node("1", inputs);
 
 g.build_graph();
 g.run_graph();
 g.wait_graph();
-std::vector<std::vector <base_data>> O;
-std::vector<std::vector <base_data>> T;
 
+
+std::vector<std::vector <data_obj>> O;
+std::vector<std::vector <data_obj>> T;
 g.get_output(O);
 g.get_trash(T);
 
@@ -145,7 +156,7 @@ for (auto& t : T)
 {
 	for (auto& n : t)
 	{
-		if ((std::get<0>(n) % 2) == 0)
+		if (((n->getData<int>("key1")) % 2) == 0)
 		{
 			return false;
 		}
@@ -156,7 +167,7 @@ for (auto& o : O)
 {
 	for (auto& n : o)
 	{
-		if ((std::get<0>(n) % 2) == 1)
+		if (((n->getData<int>("key1")) % 2) == 1)
 		{
 			return false;
 		}
@@ -203,25 +214,28 @@ bool testPrimeFilter()
 
 
 
-	g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-		auto& [ID, inData] = data;
-		return !(isPrime(std::get<0>(*inData)));
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
+		
+		return !(isPrime(i));
 		});
 
-	std::vector<base_data> inputs;
+	std::vector<data_obj> inputs;
 	int total = 1000;
-	for (int i = 1; i < total; i++)
+	for (int i = 0; i < total; i++)
 	{
-		inputs.push_back(std::tuple(i, -i));
+		auto temp = std::make_shared<base_data>();
+
+		temp->addData<int>("key1", 1);
 	}
 	g.add_start_node("1", inputs);
 
 	g.build_graph();
 	g.run_graph();
 	g.wait_graph();
-	std::vector<std::vector <base_data>> O;
-	std::vector<std::vector <base_data>> T;
 
+
+	std::vector<std::vector <data_obj>> O;
+	std::vector<std::vector <data_obj>> T;
 	g.get_output(O);
 	g.get_trash(T);
 
@@ -229,7 +243,7 @@ bool testPrimeFilter()
 	{
 		for (auto& n : t)
 		{
-			if (isPrime(std::get<0>(n)))
+			if (isPrime((n->getData<int>("key1"))))
 			{
 				return false;
 			}
@@ -240,7 +254,7 @@ bool testPrimeFilter()
 	{
 		for (auto& n : o)
 		{
-			if (!isPrime(std::get<0>(n)))
+			if (!isPrime(n->getData<int>("key1")))
 			{
 				return false;
 			}
@@ -253,42 +267,48 @@ bool testMultipleFiltersAndOutputs()
 
 	graph g;
 
-	g.add_proccess_node("0", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("0", "key1", "key2", [](int i) {
+		return 1;
+		});
+
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
 		
+		return !(isEven(i));
 		});
-
-	g.add_filter_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-		auto& [ID, inData] = data;
-		return !(isEven(std::get<0>(*inData)));
+	g.add_proccess_node("2", "key1", "key2", [](int i) {
+		
+		return !(isPrime(i));
 		});
-	g.add_filter_node("2", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-		auto& [ID, inData] = data;
-		return !(isPrime(std::get<0>(*inData)));
-		});
-
-	std::vector<base_data> inputs;
-	int total = 20;
-	for (int i = 0; i < total; i++)
-	{
-		inputs.push_back(std::tuple(i, -i));
-	}
-	g.add_start_node("0", inputs);
 	g.add_edge("0", "1");
 	g.add_edge("0", "2");
+
+	std::vector<data_obj> inputs;
+	int total = 1000;
+	for (int i = 0; i < total; i++)
+	{
+		auto temp = std::make_shared<base_data>();
+
+		temp->addData<int>("key1", 1);
+	}
+	g.add_start_node("0", inputs);
+
 	g.build_graph();
 	g.run_graph();
 	g.wait_graph();
-	std::vector<std::vector <base_data>> O;
-	std::vector<std::vector <base_data>> T;
+
+
+	std::vector<std::vector <data_obj>> O;
+	std::vector<std::vector <data_obj>> T;
 
 	g.get_output(O);
 	g.get_trash(T);
 
+	std::cout << O.size() << " " << O.at(0).size() << " " << T.size() << " " << T.at(0).size();
 	
 	for (auto& n : T.at(0))
 	{
 		
-		if (isEven(std::get<0>(n)))
+		if (isEven(n->getData<int>("key1")))
 		{
 			
 			return false;
@@ -298,7 +318,7 @@ bool testMultipleFiltersAndOutputs()
 	for (auto& n : O.at(0))
 	{
 		
-		if (!isEven(std::get<1>(n)))
+		if (!isEven(n->getData<int>("key1")))
 		{
 			return false;
 		}
@@ -307,7 +327,7 @@ bool testMultipleFiltersAndOutputs()
 	for (auto& n : T.at(1))
 	{
 		
-		if (isPrime(std::get<0>(n)))
+		if (isPrime(n->getData<int>("key1")))
 		{
 			return false;
 		}
@@ -316,7 +336,7 @@ bool testMultipleFiltersAndOutputs()
 	for (auto& n : O.at(1))
 	{
 		
-		if (!isPrime(std::get<0>(n)))
+		if (!isPrime(n->getData<int>("key1")))
 		{
 			return false;
 		}

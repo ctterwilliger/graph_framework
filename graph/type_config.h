@@ -1,41 +1,63 @@
 #pragma once
 #include <vector>
 #include <memory>
-
-
+#include <map>
+#include <string>
+#include <iostream>
 using data_ID = int;
 
 
 
-//class base_data {
-//public:
-//    virtual ~base_data() = default;
-//};
-//
-//template <typename T>
-//class user_data : public base_data {
-//public:
-//    explicit user_data(T const& t) : t_{ t } {}
-//
-//private:
-//    T t_;
-//};
-//
-//
-//class user_data_store {
-//public:
-//
-//    template <typename T>
-//    void add_data(T const& t)
-//    {
-//        data_.push_back(std::make_unique<user_data<T>>(t));
-//    }
-//
-//private:
-//    std::vector<std::unique_ptr<base_data>> data_;
-//};
+class b_data {
+public:
+    virtual ~b_data() = default;
+};
 
-using base_data = std::tuple<int, int>;
+template <typename T>
+class user_data : public b_data {
+public:
+    explicit user_data(T const& t) : t_{ t } {}
+    const T& get() const 
+    {
+        return t_;
+    }
+private:
+    T t_;
+};
+
+
+class user_data_store {
+public:
+
+    template <typename T>
+    void addData(const std::string& dataID, T const& t)
+    {
+        if (data_.count(dataID) == 0)
+        {
+            //std::cout << "emplacing: " << dataID<< std::endl;
+            data_.emplace(dataID, std::make_unique<user_data<T>>(t));
+        } 
+    }
+    template<typename T>
+    const T& getData(const std::string & dataID) const
+    {
+        ///if (data_.count(dataID) == 0);
+        {
+            //std::cout << "key: " << dataID<<" not found";
+           // throw 7;
+        }
+        auto user_typeptr = dynamic_cast<user_data<T> const *>( data_.at(dataID).get());
+        if (user_typeptr == nullptr)
+        {
+            throw 8; 
+        }
+        return user_typeptr->get();
+    }
+private:
+    std::map<std::string, std::unique_ptr<b_data>> data_;
+};
+
+using base_data = user_data_store; 
 using data_obj = std::shared_ptr<base_data>;
 using data_t = std::tuple< data_ID, data_obj>;
 // TODO: Reference additional headers your program requires here.
@@ -69,4 +91,13 @@ bool isEquivID(data_ID ID1, data_ID ID2)
         return true;
     }
     return false; 
+}
+
+
+data_ID negateID(const data_ID& data)
+{
+    if (isValidID(data))
+    {
+        return -data;
+    }
 }

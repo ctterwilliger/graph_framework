@@ -1,5 +1,5 @@
 #include "graph.h"
-#include "splitter_node.h"
+
 #include "filter_node.h"
 #include <iostream>
 #include "type_config.h"
@@ -128,7 +128,7 @@ void graph::add_filter_node(const data_nodeID  & nodeID, size_t const& concurren
 
 // Allow the user to creat a proccess node that is added to user_nodes
 template<typename Func>
-void graph::add_proccess_node(const data_nodeID & nodeID, size_t const& concurrency, Func f)
+void graph::add_proccess_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{
@@ -136,7 +136,9 @@ void graph::add_proccess_node(const data_nodeID & nodeID, size_t const& concurre
 	}
 	else
 	{
-		user_nodes.emplace(nodeID, std::make_pair(make_proccess_node(g, concurrency, f), 0));
+		using R = return_type<Func>;
+		using Arg = arg_type<Func>;
+		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R,Arg>>(f,  input_key, output_key,  g), 0));
 	}
 }
 
@@ -188,12 +190,12 @@ void graph::build_graph() {
 	
 	if ((start_node.size() != 0) && (user_nodes.count(firstNode) != 0))
 	{
-		make_edge(start_node.at(0), (user_nodes.at(firstNode)).first);
+		make_edge(start_node.at(0), (user_nodes.at(firstNode)).first->get_node());
 	}
 }
 
 
-void graph::add_start_node(const data_nodeID Node, std::vector<base_data> F) {
+void graph::add_start_node(const data_nodeID Node, std::vector<data_obj> F) {
 	if(user_nodes.count(Node) != 0){
 		inputs = F;
 		firstNode = Node;
@@ -261,7 +263,7 @@ void graph::connect_nodes()
 		}
 		else if (num2 == 1)
 		{
-			oneapi::tbb::flow::make_edge(node1, node2);
+			oneapi::tbb::flow::make_edge(node1 ->get_node(), node2->get_node());
 		}
 		else
 		{
@@ -310,7 +312,7 @@ void graph::find_end(const data_nodeID & curNodeID)
 			create_EoG_node(curNodeID);
 			auto& [nodeAtEnd, num] = user_nodes.at(curNodeID);
 			auto& EoG = end_graph_nodes.at(curNodeID);
-			make_edge(nodeAtEnd, EoG);
+			make_edge(nodeAtEnd->get_node(), EoG);
 			EoGs.push_back(curNodeID);
 		}
 	}
@@ -344,8 +346,8 @@ void graph::find_end(const data_nodeID & curNodeID)
 //creates an EoG node to proceed a given node
 void graph::create_EoG_node(const data_nodeID & node)
 {
-	oneapi::tbb::concurrent_vector<base_data> trash;
-	oneapi::tbb::concurrent_vector<base_data> valid;
+	oneapi::tbb::concurrent_vector<data_obj> trash;
+	oneapi::tbb::concurrent_vector<data_obj> valid;
 	trash_outputs.push_back(trash);
 	valid_outputs.push_back(valid);
 	end_graph_nodes.emplace(node, make_end_of_graph_node(g,valid_outputs.back(),trash_outputs.back()));
@@ -446,7 +448,7 @@ void graph::create_join( data_nodeID nodeID, const size_t& JOINS)
 	auto& [proNode, num2] = user_nodes.at(nodeID); 
 	auto& JOIN = joins.at(nodeID); 
 	auto &lastNode =JOIN->EndNode();
-	lastNode->connect_to_combine(proNode);
+	lastNode->connect_to_combine(proNode->get_node());
 	
 
 
@@ -460,7 +462,7 @@ void graph::create_join( data_nodeID nodeID, const size_t& JOINS)
 	oneapi::tbb::flow::make_edge(combineNode, proNode);*/
 }
 
-void graph::get_trash(std::vector<std::vector<base_data>>& V)
+void graph::get_trash(std::vector<std::vector<data_obj>>& V)
 {
 	V.resize(trash_outputs.size());
 	int i = 0;
@@ -476,7 +478,7 @@ void graph::get_trash(std::vector<std::vector<base_data>>& V)
 	
 }
 
-void graph::get_output(std::vector<std::vector<base_data>>& V)
+void graph::get_output(std::vector<std::vector<data_obj>>& V)
 {
 	V.resize(valid_outputs.size());
 	int i =0;
@@ -496,7 +498,7 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 	auto & [node1, num1] = user_nodes.at(nodeID1);
 	auto & JOIN = joins.at(nodeID2);
 
-	oneapi::tbb::flow::make_edge(node1, JOIN->nextPort()); 
+	oneapi::tbb::flow::make_edge(node1->get_node(), JOIN->nextPort());
 
 
 
@@ -527,61 +529,5 @@ void graph::connect_to_join(const data_nodeID& nodeID1, const data_nodeID & node
 	//}
 }
 
-
-//
-//int log_base(int num, int base)
-//{
-//	return std::log(num) / std::log(base);
-//}
-//
-//
-//const int MAX_NUM_JOINS = 10;
-//void graph::big_join(const data_nodeID& nodeID1, size_t& num)
-//{
-//	int temp = num / MAX_NUM_JOINS;
-//	temp *= MAX_NUM_JOINS;
-//	
-//	int numOfTopJoins = num - temp;
-//	int numOfTopCompleteJoins = numOfTopJoins / (MAX_NUM_JOINS-1); 
-//	int lastNode = numOfTopJoins % (MAX_NUM_JOINS - 1); 
-//	int complete_rows = log_base(num, MAX_NUM_JOINS); 
-//
-//	int 	
-//
-//
-//
-//
-//
-//
-//}
-
-
-
-// TODO
-//void graph::find_start_node() {
-//
-//
-//}
-
-
-//big_join\
-//
-//
-//
-//// returns a join node
-//auto graph::add_join_node()
-//{
-//	return make_join_node<data_t, data_t>(g);
-//
-//}
-//
-//
-//
-//// returns a combine node
-//auto graph::add_combine_node()
-//{
-//	return make_combine_node<data_t, data_t>(g);
-//}
-//
 
 

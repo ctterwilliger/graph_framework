@@ -7,8 +7,8 @@
 #include "type_config.h"
 #include <oneapi/tbb.h>
 oneapi::tbb::flow::input_node<data_t>
-make_start_node(oneapi::tbb::flow::graph& g, std::vector<base_data> & F) {
-	return oneapi::tbb::flow::input_node<data_t>(g, [count = 1, F](oneapi::tbb::flow_control& fc) mutable
+make_start_node(oneapi::tbb::flow::graph& g, std::vector<data_obj> & F) {
+	return oneapi::tbb::flow::input_node<data_t>(g, [count = 0, F](oneapi::tbb::flow_control& fc) mutable
 	{
 		
 
@@ -18,18 +18,19 @@ make_start_node(oneapi::tbb::flow::graph& g, std::vector<base_data> & F) {
 		}
 		
 		data_t output;
-		auto temp2 = std::make_shared<base_data>();
+		
 		if (count < F.size())
 		{
-			auto & temp = F.at(count);
-			auto& [ID, data] = output;
-			data = temp2; 
-			*data = temp;
-
-			ID = count;
+			 output = std::make_tuple(count + 1, F.at(count));
+			 
+			
+			
+			
 		}
+		//d::cout << "Test";
 		count++;
-		return output; 
+		
+		return output;
 
 		/*if (count == 1)
 		{

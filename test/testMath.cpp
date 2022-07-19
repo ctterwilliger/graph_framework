@@ -10,13 +10,14 @@ bool testPrimeSieve()
 {
 	graph primeGraph; 
 
-	primeGraph.add_proccess_node("findStop", flow::unlimited, [](const data_t & data) {
-		auto& [ID, inData] = data; 
-		auto& [int1, int2] = *inData;
-		int2 = sqrt(int1) + 1; 
+	primeGraph.add_proccess_node("findStop", "key1", "key2", [](int i) {
+		 
+		
+		return sqrt(i) + 1; 
+
 	});
 
-	primeGraph.add_filter_node("checkBase", flow::unlimited, [](const data_t & data)
+	primeGraph.add_proccess_node("checkBase", "key1", "key2", [](int i) 
 	{
 		auto& [ID, inData] = data;
 		auto& [int1, int2] = *inData;
@@ -95,7 +96,7 @@ bool testPrimeSieve()
 		
 		});
 	std::vector<base_data> inputs; 
-	int total = 10'000'000;
+	int total = 1'000'000;
 	for (int i = 0; i < total; i++)
 	{
 		inputs.push_back(std::tuple(i, 0));

@@ -7,17 +7,18 @@ find_package(TBB REQUIRED)
 add_library(graph INTERFACE
 	"framework.cpp" 
 	"framework.hpp"
-	"multi_node.cpp" 
+	
 	"filter_node.cpp" 
 	 
-	"splitter_node.cpp" 
+	
 	"graph_end_node.cpp"
 	"start_node.cpp" 
 	"proccessor_node.cpp"
 	 "type_config.h"
 	 "combine_node.cpp"
 	 "combine_node.h"
-	 "start_node.h")
+	 "start_node.h" 
+	 "node.cpp")
 
 
 # Add source to this project's executable.

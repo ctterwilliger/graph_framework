@@ -18,8 +18,8 @@ bool zeroNodes()
 bool oneNode()
 {
 	graph g;
-	g.add_proccess_node("1", oneapi::tbb::flow::unlimited, [](const data_t & data) {
-		auto& [ID, inData] = data; 
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
 	g.build_graph();
@@ -31,20 +31,20 @@ bool oneNode()
 
 bool basicGraph() {
 	graph g;
-	g.add_proccess_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("2", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("2", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_filter_node("3", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("3", "key1", "key2", [](int i) {
 		return false; 
 		}
 	);
-	g.add_proccess_node("4", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("4", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
 
@@ -52,40 +52,48 @@ bool basicGraph() {
 	g.add_edge("1", "3");
 	g.add_edge("3", "4");
 	g.add_edge("2", "4");
-	std::vector<base_data> V; 
-	V.push_back(std::make_tuple(1, 1)); 
+	std::vector<data_obj> V; 
+	auto temp = std::make_shared<base_data>();
+
+	temp->addData<int>("key1", 1);
+	//cout << temp->getData<double>("key1");
+	V.push_back(temp);
 	g.add_start_node("1", V);
 	g.build_graph();
+	
 	g.run_graph();
 	g.wait_graph();
-	return true; 
+	return true;
 }
 
 bool multiEoGs()
 {
 	graph g; 
 
-	g.add_proccess_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
 
-	g.add_proccess_node("2", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("2", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
 
-	g.add_proccess_node("3", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("3", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
 	//std::cout << "Test" << endl; 
 	g.add_edge("1", "2");
 	g.add_edge("1", "3");
 
-	std::vector<base_data> V;
-	V.push_back(std::make_tuple(1, -1));
-	g.add_start_node("1", V);
+	std::vector<data_obj> V;
+	auto temp = std::make_shared<base_data>();
+
+	temp->addData<int>("key1", 1);
+	
+	V.push_back(temp);
 	g.build_graph();
 	g.run_graph();
 	g.wait_graph();
@@ -98,40 +106,40 @@ bool multiEoGs()
 bool complexGraph()
 {
 	graph g;
-	g.add_proccess_node("1", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("1", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("2", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("2", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_filter_node("3", oneapi::tbb::flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("3", "key1", "key2", [](int i) {
 		return false;
 		}
 	);
-	g.add_proccess_node("4", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("4", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("5", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("5", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("6", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("6", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("7", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("7", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("8", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("8", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
-	g.add_proccess_node("9", oneapi::tbb::flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("9", "key1", "key2", [](int i) {
+		return 1;
 		}
 	);
 	g.add_edge("1", "2");
@@ -145,9 +153,12 @@ bool complexGraph()
 	g.add_edge("6", "9");
 	g.add_edge("7", "9"); 
 	g.add_edge("1", "8"); 
-	std::vector<base_data> V;
-	V.push_back(std::make_tuple(1, 1));
-	g.add_start_node("1", V);
+	std::vector<data_obj> V;
+	auto temp = std::make_shared<base_data>();
+
+	temp->addData<int>("key1", 1);
+
+	V.push_back(temp);
 	g.build_graph();
 	g.run_graph();
 	g.wait_graph();
@@ -160,17 +171,17 @@ bool largeJoin()
 	graph g;
 
 
-	g.add_filter_node("a1", flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("a1", "key1", "key2", [](int i) {
 		return false;
-
+		
 		});
 
 
-	g.add_proccess_node("a4", flow::unlimited, [](const data_t& data) {
-
+	g.add_proccess_node("a4", "key1", "key2", [](int i) {
+		return 1;
 
 		});
-	g.add_filter_node("0", flow::unlimited, [](const data_t& data) {
+	g.add_proccess_node("0", "key1", "key2", [](int i) {
 
 		return false;
 		}
@@ -181,8 +192,8 @@ bool largeJoin()
 	g.add_edge("a1", to_string(0));
 	for (int i = 1; i < 123; i++)
 	{
-		g.add_proccess_node(to_string(i), flow::unlimited, [](const data_t& data) {
-
+		g.add_proccess_node(to_string(i), "key1", "key2", [](int i) {
+			return 1;
 
 			});
 		g.add_edge(to_string(i), "a4");
@@ -191,12 +202,12 @@ bool largeJoin()
 
 
 
-	std::vector<base_data> V;
-	for (int i = 0; i < 10; i++)
-	{
+	std::vector<data_obj> V;
+	auto temp = std::make_shared<base_data>();
 
-		V.push_back(std::make_tuple(i, -i));
-	}
+	temp->addData<int>("key1", 1);
+
+	V.push_back(temp);
 
 	g.add_start_node("a1", V);
 

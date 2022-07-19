@@ -7,6 +7,7 @@
 #include "type_config.h"
 #include "start_node.h"
 #include "combine_node.h"
+#include "node.h"
 using data_nodeID = std::string; 
 class graph
 {
@@ -30,7 +31,7 @@ public:
 
 	// adds a proccess node to user_nodes
 	template<typename Func>
-	void add_proccess_node(const data_nodeID & nodeID, size_t const& concurrency,  Func f );
+	void add_proccess_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f );
 
 
 	// Allows the user to add an edge to the graphs set of edges(DOES NOT LINK THE EDGES)
@@ -46,13 +47,15 @@ public:
 	void print_edges();
 	void print_EoG_nodes(); 
 	
-	
-	void add_start_node(const data_nodeID, std::vector <base_data> F); 
+	//void tempV(std::vector<data_obj>);
+	void add_start_node(const data_nodeID, std::vector<data_obj> F); 
 
 
 	void draw_frame_graph(std::string file);
-	void get_trash(std::vector<std::vector<base_data>>& V);
-	void get_output(std::vector<std::vector<base_data>>& V);
+	void get_trash(std::vector<std::vector<data_obj>>& V);
+	void get_output(std::vector<std::vector<data_obj>>& V);
+	
+	
 
 	//TODO
 	/*template<typename Func1, typename Func2>
@@ -117,7 +120,7 @@ private:
 	std::map<data_nodeID, std::shared_ptr<JOIN_NODE>>joins; 
 		
 	std::map<data_nodeID, 
-		std::pair<oneapi::tbb::flow::function_node<data_t, data_t>,size_t>> user_nodes;
+		std::pair<std::shared_ptr<base_node>,size_t>> user_nodes;
 
 	// MaP(nameOfNodetoPrecess, tuple<join_node, combine_node, numOfCurConnectedNode))
 	// Map(nameOfNodetoProceed, EoGNode), 
@@ -131,13 +134,13 @@ private:
 	std::vector<std::pair<data_nodeID,data_nodeID>> edges; 
 
 	data_nodeID firstNode; 
-	std::vector<base_data> inputs; 
+	std::vector<data_obj> inputs; 
 	std::vector<oneapi::tbb::flow::input_node<data_t>> start_node;
-	oneapi::tbb::concurrent_vector < oneapi::tbb::concurrent_vector<base_data>> valid_outputs;
-	oneapi::tbb::concurrent_vector <oneapi::tbb::concurrent_vector<base_data>> trash_outputs;
+	oneapi::tbb::concurrent_vector < oneapi::tbb::concurrent_vector<data_obj>> valid_outputs;
+	oneapi::tbb::concurrent_vector <oneapi::tbb::concurrent_vector<data_obj>> trash_outputs;
 	std::vector<data_nodeID> EoGs; 
 	
-
+	user_data_store data_template; 
 	
 };
 

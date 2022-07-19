@@ -40,11 +40,11 @@ TEST_CASE("Flag Testing" "[Flags]")
 }
 
 
-TEST_CASE("MATH Testing" "[MATH]")
-{
-	CHECK(testPrimeSieve());
-}
-
+//TEST_CASE("MATH Testing" "[MATH]")
+//{
+//	CHECK(testPrimeSieve());
+//}
+//
 
 //JOIN NODE TESTING
 
