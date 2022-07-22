@@ -211,12 +211,14 @@ bool largeJoin()
 
 	g.add_start_node("a1", V);
 
-
+	
 
 	g.build_graph();
-
+	
 	g.run_graph();
+	
 	g.wait_graph();
+	
 	return true; 
 }
 

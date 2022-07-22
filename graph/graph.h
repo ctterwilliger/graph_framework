@@ -33,6 +33,21 @@ public:
 	template<typename Func>
 	void add_proccess_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f );
 
+	template<typename Func, typename ...Inputs>
+	void add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::string const& output_key, Func f);
+
+	template<typename Func, typename ...Inputs>
+	void add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, Func f);
+
+	template<typename Func>
+	void add_proccess_node(const data_nodeID& nodeID, std::string const& output_key, Func f);
+
+	template<typename Func>
+	void add_proccess_node(const data_nodeID& nodeID, Func f);
+
+	template<typename Func, typename ...Inputs, typename ...Outputs>
+	void add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::tuple<Outputs...> output_keys, Func f);
+
 
 	// Allows the user to add an edge to the graphs set of edges(DOES NOT LINK THE EDGES)
 	void add_edge( const data_nodeID  nodeID1,const data_nodeID nodeID2);

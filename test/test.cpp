@@ -6,6 +6,7 @@
 #include "test_contruction.h"
 #include "filter_testing.h"
 #include "testMath.h"
+//#include "nodeTesting.h"
 //#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
@@ -40,11 +41,16 @@ TEST_CASE("Flag Testing" "[Flags]")
 }
 
 
-//TEST_CASE("MATH Testing" "[MATH]")
-//{
-//	CHECK(testPrimeSieve());
-//}
+TEST_CASE("MATH Testing" "[MATH]")
+{
+CHECK(testPrimeSieve());
+}
 //
+
+//TEST_CASE("Deducing Node" "[Deduce Node]")
+//{
+//	CHECK(testNoReturnKeyFilter());
+//}
 
 //JOIN NODE TESTING
 

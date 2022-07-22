@@ -110,19 +110,19 @@ void graph::run_graph() {
 
 
 
-// Allows the user to create a filter node that is added to user_nodes
-template<typename FT>
-void graph::add_filter_node(const data_nodeID  & nodeID, size_t const& concurrency, FT  Func)
-{
-	if ((is_node_in_graph(nodeID)))
-	{
-		throw 1; /// IS NOT CAUGHT YET
-	}
-	else
-	{
-		user_nodes.emplace(nodeID, std::make_pair(make_filter_node(g, concurrency, Func), 0));
-	}
-}
+//// Allows the user to create a filter node that is added to user_nodes
+//template<typename FT>
+//void graph::add_filter_node(const data_nodeID  & nodeID, size_t const& concurrency, FT  Func)
+//{
+//	if ((is_node_in_graph(nodeID)))
+//	{
+//		throw 1; /// IS NOT CAUGHT YET
+//	}
+//	else
+//	{
+//		user_nodes.emplace(nodeID, std::make_pair(make_filter_node(g, concurrency, Func), 0));
+//	}
+//}
 
 
 
@@ -137,10 +137,113 @@ void graph::add_proccess_node(const data_nodeID & nodeID,  std::string const& in
 	else
 	{
 		using R = return_type<Func>;
-		using Arg = arg_type<Func>;
-		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R,Arg>>(f,  input_key, output_key,  g), 0));
+		using Arg = arg_types<Func>;
+		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, std::tuple(output_key), g, std::tuple(input_key)), 0 ));
 	}
 }
+
+template<typename Func, typename ...Inputs>
+void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::string const& output_key, Func f)
+{
+	if ((is_node_in_graph(nodeID)))
+	{
+		throw 1; /// IS NOT CAUGHT YET
+	}
+	else
+	{
+		using R = return_type<Func>;
+		using Arg = arg_types<Func>;
+		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, std::tuple(output_key), g, input_keys), 0));
+	}
+}
+
+template<typename Func, typename...Keys>
+void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Keys...> keys, Func f)
+{
+	if ((is_node_in_graph(nodeID)))
+	{
+		throw 1; /// IS NOT CAUGHT YET
+	}
+	else
+	{
+		using R = return_type<Func>;
+		using Arg = arg_types<Func>;
+		if constexpr (is_same_v<R, bool>)
+		{
+			
+			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g, keys), 0));
+		}
+		else if constexpr (!(is_same_v<R, void>))
+		{
+			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g, keys), 0));
+		}
+		else
+		{
+			
+			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, keys, g, std::tuple()), 0));
+		}
+		
+	}
+}
+
+template<typename Func>
+void graph::add_proccess_node(const data_nodeID& nodeID, std::string const& key, Func f)
+{
+	if ((is_node_in_graph(nodeID)))
+	{
+		throw 1; /// IS NOT CAUGHT YET
+	}
+	else
+	{
+		using R = return_type<Func>;
+		using Arg = arg_types<Func>;
+		if constexpr (is_same_v<R, bool>)
+		{
+			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g, std::tuple(key)), 0));
+		}
+		else if constexpr (!(is_same_v<R, void>))
+		{
+			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g, std::tuple(key)), 0));
+		}
+		else
+		{
+			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, std::tuple(key), g, std::tuple()), 0));
+		}
+	}
+}
+
+template<typename Func>
+void graph::add_proccess_node(const data_nodeID& nodeID, Func f)
+{
+	if ((is_node_in_graph(nodeID)))
+	{
+		throw 1; /// IS NOT CAUGHT YET
+	}
+	else
+	{
+		using R = return_type<Func>;
+		using Arg = arg_types<Func>;
+		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g), 0));
+	}
+}
+
+template<typename Func, typename ...Inputs, typename ...Outputs>
+void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::tuple<Outputs...> output_keys, Func f)
+{
+	if ((is_node_in_graph(nodeID)))
+	{
+		throw 1; /// IS NOT CAUGHT YET
+	}
+	else
+	{
+		using R = return_type<Func>;
+		using Arg = arg_types<Func>;
+		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, output_keys, g, input_keys), 0));
+	}
+}
+
+
+
 
 
 

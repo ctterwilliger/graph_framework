@@ -283,8 +283,9 @@ oneapi::tbb::flow::receiver<data_t> & join_and_combine<T...>::get_join_port(size
 		}
 		break;
 	default:
-	
+		throw 7;
 		return std::get<0>(node.input_ports());
 	}
-
+	throw 8; 
+	return std::get<0>(node.input_ports());
 }

@@ -19,7 +19,8 @@ bool testSingleFilter() {
 	{
 		auto temp = std::make_shared<base_data>();
 
-		temp->addData<int>("key1", 1);
+		temp->addData<int>("key1", i);
+		inputs.push_back(temp);
 	}
 	g.add_start_node("1", inputs);
 
@@ -51,23 +52,23 @@ bool testFilterAndJoin() {
 
 
 
-	g.add_proccess_node("1", "key1", "key2", [](const data_t& data) {
+	g.add_proccess_node("1",   []() {
 		//auto& [ID, inData] = *data;
 		return true;
 		});
-	g.add_proccess_node("2", "key1", "key2", [](const data_t& data) {
+	g.add_proccess_node("2",   []() {
 		//auto& [ID, inData] = *data;
 		return false;
 		});
-	g.add_proccess_node("3", "key1", "key2", [](const data_t& data) {
+	g.add_proccess_node("3",  []() {
 		//auto& [ID, inData] = *data;
 		return 1;
 		});
-	g.add_proccess_node("4", "key1", "key2", [](const data_t& data) {
+	g.add_proccess_node("4",  []() {
 		//auto& [ID, inData] = *data;
 		return 1;
 		});
-	g.add_proccess_node("0", "key1", "key2", [](const data_t& data) {
+	g.add_proccess_node("0",   []() {
 		//auto& [ID, inData] = *data;
 		return false;
 		});
@@ -86,6 +87,7 @@ bool testFilterAndJoin() {
 		auto temp = std::make_shared<base_data>();
 
 		temp->addData<int>("key1", 1);
+		inputs.push_back(temp);
 	}
 	g.add_start_node("1", inputs);
 
@@ -127,7 +129,7 @@ graph g;
 
 
 
-g.add_proccess_node("1", "key1", "key2", [](int i) {
+g.add_proccess_node("1", "key1", [](int i) {
 	
 	return !(isEven(i));
 	});
@@ -138,13 +140,16 @@ for (int i = 0; i < total; i++)
 {
 	auto temp = std::make_shared<base_data>();
 
-	temp->addData<int>("key1", 1);
+	temp->addData<int>("key1", i);
+	inputs.push_back(temp);
 }
+
 g.add_start_node("1", inputs);
 
 g.build_graph();
 g.run_graph();
 g.wait_graph();
+
 
 
 std::vector<std::vector <data_obj>> O;
@@ -156,8 +161,10 @@ for (auto& t : T)
 {
 	for (auto& n : t)
 	{
+		//std::cout << n->getData<int>("key1") << std::endl;
 		if (((n->getData<int>("key1")) % 2) == 0)
 		{
+			
 			return false;
 		}
 	}
@@ -167,6 +174,7 @@ for (auto& o : O)
 {
 	for (auto& n : o)
 	{
+		//std::cout << n->getData<int>("key1") << std::endl;
 		if (((n->getData<int>("key1")) % 2) == 1)
 		{
 			return false;
@@ -214,7 +222,7 @@ bool testPrimeFilter()
 
 
 
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_proccess_node("1", "key1",  [](int i) {
 		
 		return !(isPrime(i));
 		});
@@ -225,7 +233,8 @@ bool testPrimeFilter()
 	{
 		auto temp = std::make_shared<base_data>();
 
-		temp->addData<int>("key1", 1);
+		temp->addData<int>("key1", i);
+		inputs.push_back(temp);
 	}
 	g.add_start_node("1", inputs);
 
@@ -267,15 +276,15 @@ bool testMultipleFiltersAndOutputs()
 
 	graph g;
 
-	g.add_proccess_node("0", "key1", "key2", [](int i) {
+	g.add_proccess_node("0", "key1", [](int i) {
 		return 1;
 		});
 
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_proccess_node("1", "key1", [](int i) {
 		
 		return !(isEven(i));
 		});
-	g.add_proccess_node("2", "key1", "key2", [](int i) {
+	g.add_proccess_node("2", "key1", [](int i) {
 		
 		return !(isPrime(i));
 		});
@@ -303,7 +312,7 @@ bool testMultipleFiltersAndOutputs()
 	g.get_output(O);
 	g.get_trash(T);
 
-	std::cout << O.size() << " " << O.at(0).size() << " " << T.size() << " " << T.at(0).size();
+	//std::cout << O.size() << " " << O.at(0).size() << " " << T.size() << " " << T.at(0).size();
 	
 	for (auto& n : T.at(0))
 	{

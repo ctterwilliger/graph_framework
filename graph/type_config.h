@@ -100,4 +100,28 @@ data_ID negateID(const data_ID& data)
     {
         return -data;
     }
+    return data; 
+}
+
+
+
+template<typename ...T>
+std::tuple<T...> strings_to_tuple(T...)
+{
+    static_assert(std::conjunction_v<std::is_convertible<T, std::string>...>);
+    return std::tuple(T...); 
+}
+
+template<typename ...T>
+std::tuple<T...> input_keys(T... keys)
+{
+    static_assert(std::conjunction_v<std::is_convertible<T, std::string>...>);
+    return std::tuple<T...>(keys...);
+}
+
+template<typename ...T>
+std::tuple<T...> output_keys(T... keys)
+{
+    static_assert(std::conjunction_v<std::is_convertible<T, std::string>...>);
+    return std::tuple<T...>(keys...);
 }
