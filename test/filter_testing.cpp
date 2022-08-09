@@ -8,7 +8,7 @@ bool testSingleFilter() {
 
 
 
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_process_node("1", "key1", "key2", [](int i) {
 		//auto& [ID, inData] = *data;
 		return true;
 		});
@@ -52,23 +52,23 @@ bool testFilterAndJoin() {
 
 
 
-	g.add_proccess_node("1",   []() {
+	g.add_process_node("1",   []() {
 		//auto& [ID, inData] = *data;
 		return true;
 		});
-	g.add_proccess_node("2",   []() {
+	g.add_process_node("2",   []() {
 		//auto& [ID, inData] = *data;
 		return false;
 		});
-	g.add_proccess_node("3",  []() {
+	g.add_process_node("3",  []() {
 		//auto& [ID, inData] = *data;
-		return 1;
+		return true;
 		});
-	g.add_proccess_node("4",  []() {
+	g.add_process_node("4",  []() {
 		//auto& [ID, inData] = *data;
-		return 1;
+		return true;
 		});
-	g.add_proccess_node("0",   []() {
+	g.add_process_node("0",   []() {
 		//auto& [ID, inData] = *data;
 		return false;
 		});
@@ -129,7 +129,7 @@ graph g;
 
 
 
-g.add_proccess_node("1", "key1", [](int i) {
+g.add_process_node("1", "key1", [](int i) {
 	
 	return !(isEven(i));
 	});
@@ -222,7 +222,7 @@ bool testPrimeFilter()
 
 
 
-	g.add_proccess_node("1", "key1",  [](int i) {
+	g.add_process_node("1", "key1",  [](int i) {
 		
 		return !(isPrime(i));
 		});
@@ -276,15 +276,15 @@ bool testMultipleFiltersAndOutputs()
 
 	graph g;
 
-	g.add_proccess_node("0", "key1", [](int i) {
+	g.add_process_node("0", "key1", [](int i) {
 		return 1;
 		});
 
-	g.add_proccess_node("1", "key1", [](int i) {
+	g.add_process_node("1", "key1", [](int i) {
 		
 		return !(isEven(i));
 		});
-	g.add_proccess_node("2", "key1", [](int i) {
+	g.add_process_node("2", "key1", [](int i) {
 		
 		return !(isPrime(i));
 		});

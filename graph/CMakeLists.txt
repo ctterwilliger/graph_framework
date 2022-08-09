@@ -13,14 +13,15 @@ add_library(graph INTERFACE
 	
 	"graph_end_node.cpp"
 	"start_node.cpp" 
-	"proccessor_node.cpp"
+	"processor_node.cpp"
 	 "type_config.h"
 	 "combine_node.cpp"
 	 "combine_node.h"
 	 "start_node.h" 
-	 "node.cpp")
+	 "node.cpp" 
+	 "dynamic_join_node.cpp" )
 
 
 # Add source to this project's executable.
-target_link_libraries(graph INTERFACE TBB:tbb graph_framework)
+
 # TODO: Add tests and install targets if needed.

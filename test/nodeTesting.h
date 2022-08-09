@@ -13,7 +13,7 @@
 bool testNoReturn()
 {
 	graph g;
-	g.add_proccess_node("1", std::tuple("key1"), [](int i)
+	g.add_process_node("1", std::tuple("key1"), [](int i)
 		{
 			return false;
 		}
@@ -37,7 +37,7 @@ bool testNoReturn()
 bool testNoReturnKeyFilter()
 {
 	graph g;
-	g.add_proccess_node("1", std::tuple("key1"), [](int i)
+	g.add_process_node("1", std::tuple("key1"), [](int i)
 		{
 			return false;
 		}

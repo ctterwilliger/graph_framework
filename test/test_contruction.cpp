@@ -18,7 +18,7 @@ bool zeroNodes()
 bool oneNode()
 {
 	graph g;
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_process_node("1", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
@@ -31,19 +31,19 @@ bool oneNode()
 
 bool basicGraph() {
 	graph g;
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_process_node("1", "key1", "key5", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("2", "key1", "key2", [](int i) {
+	g.add_process_node("2", "key1", "key6", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("3", "key1", "key2", [](int i) {
+	g.add_process_node("3", "key1", "key3", [](int i) {
 		return false; 
 		}
 	);
-	g.add_proccess_node("4", "key1", "key2", [](int i) {
+	g.add_process_node("4", "key1", "key4", [](int i) {
 		return 1;
 		}
 	);
@@ -70,17 +70,17 @@ bool multiEoGs()
 {
 	graph g; 
 
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_process_node("1", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
 
-	g.add_proccess_node("2", "key1", "key2", [](int i) {
+	g.add_process_node("2", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
 
-	g.add_proccess_node("3", "key1", "key2", [](int i) {
+	g.add_process_node("3", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
@@ -106,39 +106,39 @@ bool multiEoGs()
 bool complexGraph()
 {
 	graph g;
-	g.add_proccess_node("1", "key1", "key2", [](int i) {
+	g.add_process_node("1", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("2", "key1", "key2", [](int i) {
+	g.add_process_node("2", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("3", "key1", "key2", [](int i) {
+	g.add_process_node("3", "key1", "key2", [](int i) {
 		return false;
 		}
 	);
-	g.add_proccess_node("4", "key1", "key2", [](int i) {
+	g.add_process_node("4", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("5", "key1", "key2", [](int i) {
+	g.add_process_node("5", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("6", "key1", "key2", [](int i) {
+	g.add_process_node("6", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("7", "key1", "key2", [](int i) {
+	g.add_process_node("7", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("8", "key1", "key2", [](int i) {
+	g.add_process_node("8", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
-	g.add_proccess_node("9", "key1", "key2", [](int i) {
+	g.add_process_node("9", "key1", "key2", [](int i) {
 		return 1;
 		}
 	);
@@ -171,17 +171,17 @@ bool largeJoin()
 	graph g;
 
 
-	g.add_proccess_node("a1", "key1", "key2", [](int i) {
+	g.add_process_node("a1", "key1", "key2", [](int i) {
 		return false;
 		
 		});
 
 
-	g.add_proccess_node("a4", "key1", "key2", [](int i) {
+	g.add_process_node("a4", "key1", "key3", [](int i) {
 		return 1;
 
 		});
-	g.add_proccess_node("0", "key1", "key2", [](int i) {
+	g.add_process_node("0", "key1", [](int i) {
 
 		return false;
 		}
@@ -192,7 +192,7 @@ bool largeJoin()
 	g.add_edge("a1", to_string(0));
 	for (int i = 1; i < 123; i++)
 	{
-		g.add_proccess_node(to_string(i), "key1", "key2", [](int i) {
+		g.add_process_node(to_string(i), "key1", "key2" + std::to_string(i) , [](int i) {
 			return 1;
 
 			});

@@ -18,7 +18,7 @@ public:
 // filter node needs a second useless key
 // cannot handle multiple outputs
 // cannot handle multiple inputs (simple function works)
-//requires a return type for accessing outside graph
+// requires a return type for accessing outside graph
 template <typename T>
 using string_for_t = std::string;
 
@@ -50,20 +50,24 @@ public:
                 {
                     //store->getData<Args>(inkeys)...;
                 }
+                else
+                {
+                    auto output = unpack(store, input_keys, std::index_sequence_for<Args...>());
+                    if constexpr (is_tuple_v<R>)
+                    {
+                        static_assert(tuple_size_v<R> == sizeof ...(OutKeys));
+                        storepack(store, output, output_keys, std::index_sequence_for<OutKeys...>());
+
+
+                    }
+                    else
+                    {
+                        store->addData(std::get<0>(output_keys), output);
+                    }
+                }
                    
                        
-                       auto output = unpack(store, input_keys, std::index_sequence_for<Args...>());
-                       if constexpr (is_tuple_v<R>)
-                       {
-                           static_assert(tuple_size_v<R> == sizeof ...(OutKeys));
-                           storepack(store, output, output_keys, std::index_sequence_for<OutKeys...>());
-                           
- 
-                       }
-                       else
-                       {
-                          // store->addData(std::get<0>(output_keys), output);
-                       }
+                      
                        
                     
             }
@@ -83,10 +87,10 @@ public:
                  {
                      if constexpr (std::is_same_v<R,void>)
                      {
-                         unpack(store, input_keys, std::index_sequence_for<Args...>());
+                        // unpack(store, input_keys, std::index_sequence_for<Args...>());
                    
                      }
-                     if constexpr (std::is_same_v<R, bool>)
+                     else if constexpr (std::is_same_v<R, bool>)
                      {
                          if (unpack(store,input_keys, std::index_sequence_for<Args...>()))
                          {
@@ -118,14 +122,14 @@ public:
 
          template <typename FT>
          explicit deducing_node(FT f, oneapi::tbb::flow::graph &g) :
-             func_{ f },
-             node_{ g, oneapi::tbb::flow::unlimited, [this](data_t const& data) {
+             node_{ g, oneapi::tbb::flow::unlimited, [this,f ](data_t const& data) {
                  auto const& [id, store] = data;
+                  FT func2_= f;
                  if (isValidID(id))
                  {
                      if constexpr (std::is_same_v<R, bool>)
                      {
-                         if (func_())
+                         if (func2_())
                          {
                              data_t newOutput = data;
                              auto& [newid, newstore] = newOutput;
@@ -140,14 +144,18 @@ public:
                      }
                      else
                      {
-                         func_();
+                         func2_();
                      }
                      
                  }
                  return data;
               } }
          {}
-
+              explicit deducing_node(oneapi::tbb::flow::graph& g) :
+                  node_{ g, oneapi::tbb::flow::unlimited, [this](data_t const& data) { 
+                      return data;
+                   } }
+              {}
 
             
 
@@ -190,12 +198,35 @@ R return_type_impl(R(Func::*)(Args...) const);
 template<typename R, typename... Args, typename Func>
 std::tuple<Args...> arg_type_impl(R(Func::*)(Args...) const);
 
+template<typename Func>
+struct return_type_struct 
+{
+    using type = decltype(return_type_impl(&Func::operator()));
+};
+
+template<typename R, typename ...Args>
+struct return_type_struct<R(*)(Args...)>
+{
+    using type = R;
+};
 
 template<typename Func>
-using return_type = decltype(return_type_impl(&Func::operator()));
+struct arg_type_struct
+{
+    using type = decltype(arg_type_impl(&Func::operator()));
+};
+
+template<typename R, typename ...Args>
+struct arg_type_struct<R(*)(Args...)>
+{
+    using type = std::tuple<Args...>;
+};
 
 template<typename Func>
-using arg_types = decltype(arg_type_impl(&Func::operator()));
+using return_type = typename return_type_struct<Func>::type; 
+
+template<typename Func>
+using arg_types = typename arg_type_struct<Func>::type;
 
 template<typename Func>
 deducing_node(Func)->deducing_node<return_type<Func>, arg_types<Func>>;

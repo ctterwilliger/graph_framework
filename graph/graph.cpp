@@ -126,9 +126,9 @@ void graph::run_graph() {
 
 
 
-// Allow the user to creat a proccess node that is added to user_nodes
+// Allow the user to creat a process node that is added to user_nodes
 template<typename Func>
-void graph::add_proccess_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f)
+void graph::add_process_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{
@@ -143,7 +143,7 @@ void graph::add_proccess_node(const data_nodeID & nodeID,  std::string const& in
 }
 
 template<typename Func, typename ...Inputs>
-void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::string const& output_key, Func f)
+void graph::add_process_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::string const& output_key, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{
@@ -158,7 +158,7 @@ void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> i
 }
 
 template<typename Func, typename...Keys>
-void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Keys...> keys, Func f)
+void graph::add_process_node(const data_nodeID& nodeID, std::tuple<Keys...> keys, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{
@@ -187,7 +187,7 @@ void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Keys...> key
 }
 
 template<typename Func>
-void graph::add_proccess_node(const data_nodeID& nodeID, std::string const& key, Func f)
+void graph::add_process_node(const data_nodeID& nodeID, std::string const& key, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{
@@ -199,6 +199,7 @@ void graph::add_proccess_node(const data_nodeID& nodeID, std::string const& key,
 		using Arg = arg_types<Func>;
 		if constexpr (is_same_v<R, bool>)
 		{
+			//std::cout << "creating filter node" << std::endl; 
 			user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g, std::tuple(key)), 0));
 		}
 		else if constexpr (!(is_same_v<R, void>))
@@ -213,7 +214,7 @@ void graph::add_proccess_node(const data_nodeID& nodeID, std::string const& key,
 }
 
 template<typename Func>
-void graph::add_proccess_node(const data_nodeID& nodeID, Func f)
+void graph::add_process_node(const data_nodeID& nodeID, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{
@@ -221,14 +222,20 @@ void graph::add_proccess_node(const data_nodeID& nodeID, Func f)
 	}
 	else
 	{
-		using R = return_type<Func>;
-		using Arg = arg_types<Func>;
-		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<R, Arg>>(f, g), 0));
+		
+		user_nodes.emplace(nodeID, std::make_pair(std::make_shared<deducing_node<Func>>(f, g), 0));
 	}
 }
 
+
+void graph::add_process_node(const data_nodeID& nodeID)
+{
+	auto func = []() {};
+	add_process_node(nodeID, func);
+}
+
 template<typename Func, typename ...Inputs, typename ...Outputs>
-void graph::add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::tuple<Outputs...> output_keys, Func f)
+void graph::add_process_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::tuple<Outputs...> output_keys, Func f)
 {
 	if ((is_node_in_graph(nodeID)))
 	{

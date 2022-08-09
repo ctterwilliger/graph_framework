@@ -10,6 +10,7 @@
 // changing graphs around
 // add optimization for EoG choices
 // add mutliple start edges
+// maybe use data ptr as identify, and bool as flag
 #pragma once
 
 
@@ -17,8 +18,8 @@
 
 #include "graph_end_node.h"
 #include "start_node.h"
-
+#include "dynamic_join_node.h"
 #include "combine_node.h"
 #include "filter_node.h"
-#include "proccessor_node.h"
+#include "processor_node.h"
 

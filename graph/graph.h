@@ -3,11 +3,13 @@
 #include <vector>
 #include <map>
 #include <string>
-
 #include "type_config.h"
 #include "start_node.h"
 #include "combine_node.h"
 #include "node.h"
+#include "dynamic_join_node.h"
+
+
 using data_nodeID = std::string; 
 class graph
 {
@@ -15,7 +17,7 @@ public:
 
 	graph();
 	~graph();
-	void draw_user_graph(std::string file);
+	
 	//Activates the start Node
 	void run_graph(); 
 
@@ -29,24 +31,26 @@ public:
 	void add_filter_node(const data_nodeID  & nodeID, size_t const& concurrency, FT  Func);
 
 
-	// adds a proccess node to user_nodes
+	// adds a process node to user_nodes
 	template<typename Func>
-	void add_proccess_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f );
+	void add_process_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f );
 
 	template<typename Func, typename ...Inputs>
-	void add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::string const& output_key, Func f);
+	void add_process_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::string const& output_key, Func f);
 
 	template<typename Func, typename ...Inputs>
-	void add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, Func f);
+	void add_process_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, Func f);
 
 	template<typename Func>
-	void add_proccess_node(const data_nodeID& nodeID, std::string const& output_key, Func f);
+	void add_process_node(const data_nodeID& nodeID, std::string const& output_key, Func f);
 
 	template<typename Func>
-	void add_proccess_node(const data_nodeID& nodeID, Func f);
+	void add_process_node(const data_nodeID& nodeID, Func f);
+
+	void add_process_node(const data_nodeID& nodeID);
 
 	template<typename Func, typename ...Inputs, typename ...Outputs>
-	void add_proccess_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::tuple<Outputs...> output_keys, Func f);
+	void add_process_node(const data_nodeID& nodeID, std::tuple<Inputs...> input_keys, std::tuple<Outputs...> output_keys, Func f);
 
 
 	// Allows the user to add an edge to the graphs set of edges(DOES NOT LINK THE EDGES)
@@ -67,6 +71,7 @@ public:
 
 
 	void draw_frame_graph(std::string file);
+	void draw_user_graph(std::string file);
 	void get_trash(std::vector<std::vector<data_obj>>& V);
 	void get_output(std::vector<std::vector<data_obj>>& V);
 	

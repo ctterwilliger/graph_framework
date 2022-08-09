@@ -10,14 +10,14 @@ bool testPrimeSieve()
 {
 	graph primeGraph; 
 	
-	primeGraph.add_proccess_node("findStop", "key1", "key2", [](int i) {
+	primeGraph.add_process_node("findStop", "key1", "key2", [](int i) {
 		 
 		
-		return sqrt(i) + 1; 
+		return (int)(sqrt(i) + 1); 
 
 	});
 	
-	primeGraph.add_proccess_node("checkBase", std::tuple("key1"),  [](int int1)
+	primeGraph.add_process_node("checkBase", std::tuple("key1"),  [](int int1)
 	{
 		
 		if (int1 == 4 || int1 == 6 || int1 == 8 || int1 == 9 || int1 == 10)
@@ -32,7 +32,7 @@ bool testPrimeSieve()
 		return false;
 	}); 
 	
-	primeGraph.add_proccess_node("checkEven", std::tuple("key1"), [](int int1) {
+	primeGraph.add_process_node("checkEven", "key1", [](int int1) {
 		
 		if (int1 == 2)
 		{
@@ -41,7 +41,7 @@ bool testPrimeSieve()
 		return (bool)!(int1 & 1);
 		});
 
-	primeGraph.add_proccess_node("check1s", std::tuple("key1","key2"), [](int int1, int int2) {
+	primeGraph.add_process_node("check1s", std::tuple("key1","key2"), [](int int1, int int2) {
 		
 		for (int i = 11; i < int2; i+=10)
 		{
@@ -54,7 +54,7 @@ bool testPrimeSieve()
 		return false;
 		});
 	
-	primeGraph.add_proccess_node("check3s", std::tuple("key1", "key2"), [](int int1, int int2) {
+	primeGraph.add_process_node("check3s", std::tuple("key1", "key2"), [](int int1, int int2) {
 		
 		for (int i = 3; i < int2; i += 10)
 		{
@@ -66,7 +66,7 @@ bool testPrimeSieve()
 		return false;
 		});
 
-	primeGraph.add_proccess_node("check7s", std::tuple("key1", "key2"), [](int int1, int int2) {
+	primeGraph.add_process_node("check7s", std::tuple("key1", "key2"), [](int int1, int int2) {
 		
 		for (int i = 7; i < int2; i += 10)
 		{
@@ -78,7 +78,7 @@ bool testPrimeSieve()
 		return false;
 		});
 	
-	primeGraph.add_proccess_node("check9s", std::tuple("key1", "key2"), [](int int1, int int2) {
+	primeGraph.add_process_node("check9s", std::tuple("key1", "key2"), [](int int1, int int2) {
 		
 		for (int i = 9; i < int2; i += 10)
 		{
@@ -90,12 +90,12 @@ bool testPrimeSieve()
 		return false;
 		});
 	
-	primeGraph.add_proccess_node("end", "key6", []() {
+	primeGraph.add_process_node("end", "key1", "key3", [](int i) {
 		return 1; 
 		});
 	
 	std::vector<data_obj> inputs; 
-	int total = 1'000'000;
+	int total = 1;
 	for (int i = 0; i < total; i++)
 	{
 		auto temp = std::make_shared<base_data>();
@@ -119,7 +119,7 @@ bool testPrimeSieve()
 	primeGraph.add_edge("check9s", "end");
 	
 	primeGraph.build_graph();
-	
+	std::cout << "test" << std::endl;
 	primeGraph.run_graph();
 	primeGraph.wait_graph(); 
 	std::cout << "test" << std::endl;

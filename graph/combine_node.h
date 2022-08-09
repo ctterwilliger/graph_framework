@@ -2,7 +2,7 @@
 #include <vector>
 #include "oneapi/tbb.h"
 #include "type_config.h"
-
+#include <tuple>
 
 
 
@@ -129,123 +129,6 @@ private:
 	
 };
 
-class JOIN_NODE {
-public:
-	JOIN_NODE(size_t numOfJoins, oneapi::tbb::flow::graph& graph);
-	~JOIN_NODE();
-	oneapi::tbb::flow::receiver<data_t>& nextPort();
-	std::shared_ptr<join_base>& EndNode();
-	std::string listJoins(std::string ID);
-	std::string innerJoins(std::string ID);
-	
-	int nextNodeToDraw(); 
-private:
-	std::vector<std::shared_ptr<join_base>> joins;
-	size_t curPort;
-	size_t curNode;
-	const size_t MAXNUMOFJOINS = 10;
-	void add_node();
-	void add_node(size_t node_size);
-	int drawplace;
-	oneapi::tbb::flow::graph& g;
-};
 
 
 
-
-
-
-
-
-
-//
-//template<typename ...T>
-//oneapi::tbb::flow::sender<data_t> & join_and_combine<T...>::get_join_outport()
-//{
-//	return oneapi::tbb::flow::sender<std::tuple<T...>>(join);
-//}
-//
-//
-//template<typename ...T>
-//oneapi::tbb::flow::sender<data_t>& join_and_combine<T...>::get_combine_outport() {
-//
-//	return oneapi::tbb::flow::sender<data_t>(combine);
-//	
-//}
-//
-//template<typename ...T>
-//oneapi::tbb::flow::receiver<data_t>& join_and_combine<T...>::get_combine_inport() {
-//	return oneapi::tbb::flow::receiver<std::tuple<T...>>(combine);
-//}
-//
-
-
-
-
-
-//oneapi::tbb::flow::function_node<std::tuple<data_t, data_t>, data_t>
-//make_combine_node(oneapi::tbb::flow::graph& g) {
-//	return oneapi::tbb::flow::function_node< std::tuple <data_t, data_t>, data_t>(g, oneapi::tbb::flow::unlimited,
-//		[&](const std::tuple<data_t, data_t>& inData) {
-//			data_t output;
-//			auto& [outID, outData] = output;
-//			auto const& [inDataT1, inDataT2] = inData;
-//			auto const& [inID1, indata1] = inDataT1;
-//			auto const& [inID2, indata2] = inDataT2;
-//
-//			if (!(isEquivID(inID1, inID2)))
-//			{
-//				throw 1; 
-//			}
-// 
-//			if (inID1 < inID2)
-//			{
-//				outID = inID1;
-//			}
-//			else
-//			{
-//				outID = inID2; 
-//			}
-//			outData = indata1; 
-//			
-//			return output;
-//		}); 
-//}
-
-//oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching>
-//make_join_node(oneapi::tbb::flow::graph& g)
-//{
-//	return oneapi::tbb::flow::join_node<std::tuple<data_t, data_t>, oneapi::tbb::flow::tag_matching>(g,
-//		[](const data_t& data) {
-//			return getSizeT_ID(data);
-//
-//		},
-//		[](const data_t& data) {
-//			return getSizeT_ID(data);
-//		}
-//		);
-//}
-//// repacks ptr tuple(data_sub1) and ptr tuple(tuple_sub2) into prt and tuple(data)
-//flow::function_node< tuple<data_t, data_t>, data_pt> join_combine(g, flow::unlimited, [&](const tuple<data_t, data_t>& data) {
-//	data_pt output;
-//	auto const& [data1, data2] = data;
-//	auto const& [ptr1, base1] = data1;
-//	auto const& [ptr2, base2] = data2;
-//	auto& [ptr, tupoTup] = output;
-//	auto& [tup1, tup2] = tupoTup;
-//
-//
-//	//in case pointers are not equivlent we have somesort of error
-//	// not handled yet
-//	if (ptr1 != ptr2)
-//	{
-//		throw 1; // can be changed
-//	}
-//ptr = ptr1;
-//tup1 = base1;
-//tup2 = base2;
-//return output;
-//});
-
-
-//#include "combine_node.cpp"

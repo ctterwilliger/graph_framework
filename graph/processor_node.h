@@ -65,14 +65,14 @@
 
 //
 //template<typename Func> 
-//base_node* make_proccess_node(oneapi::tbb::flow::graph& g, size_t  concurrency, std::string const& input_key, std::string const& output_key, Func  f) {
+//base_node* make_process_node(oneapi::tbb::flow::graph& g, size_t  concurrency, std::string const& input_key, std::string const& output_key, Func  f) {
 //	return deducing_node<int, double>(f, "temp", "temp2", g);
 //}
 
 //
 //template<typename Func>
 //oneapi::tbb::flow::function_node<data_t, data_t>
-//make_proccess_node(oneapi::tbb::flow::graph& g, size_t  concurrency, Func  f) {
+//make_process_node(oneapi::tbb::flow::graph& g, size_t  concurrency, Func  f) {
 //	return oneapi::tbb::flow::function_node<data_t, data_t>(g, concurrency, [&](const data_t& data)
 //		{
 //			auto const& [ID, data_ptr] = data;

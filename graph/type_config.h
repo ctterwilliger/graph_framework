@@ -37,23 +37,34 @@ public:
             //std::cout << "emplacing: " << dataID<< std::endl;
             data_.emplace(dataID, std::make_unique<user_data<T>>(t));
         } 
+        else
+        {
+            std::cout << "key already exists" << std::endl;
+            throw 7;
+        }
     }
     template<typename T>
     const T& getData(const std::string & dataID) const
     {
-        ///if (data_.count(dataID) == 0);
+        auto temp = data_.find(dataID);
+        if(temp == data_.end())
         {
-            //std::cout << "key: " << dataID<<" not found";
-           // throw 7;
+            
+            std::cout << "key: " << dataID<<" not found";
+            throw 7;
         }
-        auto user_typeptr = dynamic_cast<user_data<T> const *>( data_.at(dataID).get());
+        
+        //std::cout << dataID;
+        auto user_typeptr = dynamic_cast<user_data<T> const *>( temp->second.get());
         if (user_typeptr == nullptr)
         {
+            std::cout << "nullptr" << std::endl; 
             throw 8; 
         }
         return user_typeptr->get();
     }
 private:
+    // maybe going through nodes first and adding all keys to map
     std::map<std::string, std::unique_ptr<b_data>> data_;
 };
 
