@@ -3,6 +3,8 @@
 #include "oneapi/tbb.h"
 #include "type_config.h"
 
+
+
 class JOIN_NODE {
 public:
 	JOIN_NODE(size_t numOfJoins, oneapi::tbb::flow::graph& graph);

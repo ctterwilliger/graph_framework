@@ -1,6 +1,4 @@
 #include "graph.h"
-
-#include "filter_node.h"
 #include <iostream>
 #include "type_config.h"
 #include "combine_node.h"

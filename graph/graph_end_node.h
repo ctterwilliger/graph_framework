@@ -24,21 +24,9 @@ make_end_of_graph_node(oneapi::tbb::flow::graph& g, oneapi::tbb::concurrent_vect
 
 	});
 }
-//
-//flow::multifunction_node<data_pt, std::tuple<std::tuple<data_b, data_b>, std::tuple<data_b, data_b>>> end_graph_node(g, flow::unlimited, [&](const data_pt& data, auto& outputs) {
-//	std::tuple<data_b, data_b> output;
-//
-//	auto& [ptr, tupoTup] = data;
-//	auto& [tup1, tup2] = output;
-//	auto& [data1, data2] = tupoTup;
-//	tup1 = data1;
-//	tup2 = data2;
-//
-//	if (*ptr)
-//	{
-//		get<1>(outputs).try_put(output);
-//	}
-//	else
-//	{
-//		get<0>(outputs).try_put(output);
-//	}
+
+
+
+
+
+

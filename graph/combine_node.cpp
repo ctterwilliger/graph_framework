@@ -1,4 +1,3 @@
-
 #include "combine_node.h"
 #include "dynamic_join_node.h"
 #include "type_config.h"
@@ -24,9 +23,7 @@ void join_and_combine<T...>::connect_to_combine(oneapi::tbb::flow::function_node
 	make_edge(combine, node);
 }
 
-
-
-
+//gets a port of join node based on number
 template <typename ...T>
 oneapi::tbb::flow::receiver<data_t>& join_and_combine<T...>::get_join_port(size_t& num) {
 	auto& node = join;
@@ -92,8 +89,6 @@ oneapi::tbb::flow::receiver<data_t>& join_and_combine<T...>::get_join_port(size_
 	throw 8;
 	return std::get<0>(node.input_ports());
 }
-
-
 
 
 //makes internal ports
