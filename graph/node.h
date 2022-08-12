@@ -3,7 +3,7 @@
 #include <functional>
 
 
-
+//base node
 class base_node
 {
 public:
@@ -12,31 +12,34 @@ public:
 };
 
 // CURRENT ISSUES 
-// cannot handle non-lamda functions
-// Cannot have no return
-// cannot have no input
-// filter node needs a second useless key
-// cannot handle multiple outputs
-// cannot handle multiple inputs (simple function works)
 // requires a return type for accessing outside graph
-template <typename T>
+
 using string_for_t = std::string;
 
+
+// The class for the deducing node
+// Deduces what kind of node it is based on output etc, then constructs it
 template <typename R, typename... Args>
 class deducing_node  : public base_node
 {
+
+    //runs the internal function
     template <std::size_t... Is, typename InputKeys>
     auto unpack(const data_obj & store, InputKeys input_keys, std::index_sequence<Is...>)
     {
         return func_(store->getData<Args>(std::get<Is>(input_keys))...);
     }
     
+    //stores a output to data store
     template <std::size_t... Is, typename OutputKeys>
     void storepack(const data_obj& store, const R& output, OutputKeys output_keys, std::index_sequence<Is...>)
     {
         (store->addData(std::get<Is>(output_keys), std::get<Is>(output)),...);
     }
+
 public:
+
+    //constuctor with input and output
     template <typename FT, typename ...InKeys, typename ...OutKeys>
     explicit deducing_node(FT f, std::tuple<OutKeys...> output_keys, oneapi::tbb::flow::graph & g, std::tuple<InKeys...> input_keys) :
         func_{ f },
@@ -71,11 +74,11 @@ public:
                        
                     
             }
-           
             return data;
          } }
     {}
 
+         // constructor with only input
          template <typename FT, typename ...InKeys>
          explicit deducing_node(FT f,  oneapi::tbb::flow::graph& g, std::tuple<InKeys...> input_keys) :
              func_{ f },
@@ -120,6 +123,7 @@ public:
              return node_;
          }
 
+         // contructor with no input or output
          template <typename FT>
          explicit deducing_node(FT f, oneapi::tbb::flow::graph &g) :
              node_{ g, oneapi::tbb::flow::unlimited, [this,f ](data_t const& data) {
@@ -166,7 +170,7 @@ private:
     
 
     
-
+    // DEDUCTION GUIDE DOWN FROM HERE ON DOWN(AKA C++ MAGIC)
     template<typename T>
     struct is_tuple_impl : std::false_type
     {

@@ -4,9 +4,11 @@
 #include <map>
 #include <string>
 #include <iostream>
+
+// This file contains most the type definations and support functions 
+
+
 using data_ID = int;
-
-
 
 class b_data {
 public:

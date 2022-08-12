@@ -2,7 +2,6 @@
 // or project specific include files.
 
 // TODO!!!!!!!!!!
-// ALLOW ACCESS OF DATA FOR USER potialt pointer to vector(or to data_t) instead of vector of point
 // HANDLE EXCEPTIONS
 // Potential sorting of edges to increase contruction speed (ESPECIALLY the find EOG)
 // review of data structures
@@ -11,6 +10,7 @@
 // add optimization for EoG choices
 // add mutliple start edges
 // maybe use data ptr as identify, and bool as flag
+//Removing edges
 #pragma once
 
 

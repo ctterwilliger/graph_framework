@@ -26,12 +26,11 @@ public:
 	void wait_graph();
 
 
-	// adds a filter node to user_nodes
-	template<typename FT>
-	void add_filter_node(const data_nodeID  & nodeID, size_t const& concurrency, FT  Func);
+
 
 
 	// adds a process node to user_nodes
+	// Many different definations to support many differnt types of nodes
 	template<typename Func>
 	void add_process_node(const data_nodeID & nodeID,  std::string const& input_key, std::string const& output_key, Func f );
 
@@ -77,9 +76,7 @@ public:
 	
 	
 
-	//TODO
-	/*template<typename Func1, typename Func2>
-	void remove_edge(typename Func1, typename Func2);*/
+
 	
 	
 
@@ -115,30 +112,23 @@ private:
 	
 	
 	//creates a EoG_node for a given node
-	void create_EoG_node(const data_nodeID & node); 
-
-	//TODO
-	//void clear_data(); 
+	void create_EoG_node(const data_nodeID & node);  
 	
-	//void find_start_node();
+	
 
 
-	// these print for the purposed of testing
-	//void create_output_node(data_nodeID node);
-
-	//void create_trash_node(data_nodeID node);
 	
 	
 	
 	
 	
 	
-	// hold all the assocated nodes
-	// Map(name, pair(user node, numPredessors))
 	
-
+	// Holds join node
 	std::map<data_nodeID, std::shared_ptr<JOIN_NODE>>joins; 
 		
+	// hold all the assocated nodes
+	// Map(name, pair(user node, numPredessors))
 	std::map<data_nodeID, 
 		std::pair<std::shared_ptr<base_node>,size_t>> user_nodes;
 
